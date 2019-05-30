@@ -1,6 +1,6 @@
 Changelog
 =========
 
-0.1 (TODO_PROJECT_INITIAL_DATE)
+0.1 (2019-05-30)
 ----------------
 

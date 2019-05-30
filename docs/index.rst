@@ -1,8 +1,8 @@
-====
-TODO_PROJECT_NAME
-====
+===========
+OpenCAL GUI
+===========
 
-TODO_PROJECT_SHORT_DESC
+Opencal Python GUI
 
 Note:
 
@@ -17,11 +17,11 @@ Contents:
    API <api>
    developer
 
-* Web site: TODO_PROJECT_WEB_SITE_URL
-* Online documentation: TODO_PROJECT_ONLINE_DOCUMENTATION_URL
-* Source code: TODO_PROJECT_GITHUB_URL
-* Issue tracker: TODO_PROJECT_ISSUE_TRACKER_URL
-* TODO_PYTHON_PACKAGE_NAME on PyPI: TODO_PROJECT_PYPI_URL
+* Web site: http://www.jdhp.org/software_en.html#opcgui
+* Online documentation: https://jdhp.gitlab.io/opcgui
+* Source code: https://gitlab.com/jdhp/opencal-gui-pyqt
+* Issue tracker: https://gitlab.com/jdhp/opencal-gui-pyqt/issues
+* opcgui on PyPI: https://pypi.org/project/opcgui
 
 Indices and tables
 ==================

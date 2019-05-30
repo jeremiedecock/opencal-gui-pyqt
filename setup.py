@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-# TODO_PROJECT_NAME
+# OpenCAL GUI
 
 # The MIT License
 #
-# TODO_COPYRIGHT_NOTICE
+# Copyright (c) 2019 Jérémie DECOCK (www.jdhp.org)
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -44,16 +44,16 @@ except ImportError:
 
 # SETUP VARIABLES #############################################################
 
-from TODO_PYTHON_PACKAGE_NAME import get_version
+from opcgui import get_version
 
 VERSION = get_version()
 
-AUTHOR_NAME = 'TODO_AUTHOR_NAME'
-AUTHOR_EMAIL = 'TODO_AUTHOR_EMAIL'
+AUTHOR_NAME = 'Jérémie DECOCK'
+AUTHOR_EMAIL = 'jd.jdhp@gmail.com'
 
-PYPI_PACKAGE_NAME = 'TODO_PYTHON_PACKAGE_NAME'
-PROJECT_SHORT_DESC = 'TODO_PROJECT_SHORT_DESC'
-PROJECT_WEB_SITE_URL = 'TODO_PROJECT_WEB_SITE_URL'
+PYPI_PACKAGE_NAME = 'opcgui'
+PROJECT_SHORT_DESC = 'Opencal Python GUI'
+PROJECT_WEB_SITE_URL = 'http://www.jdhp.org/software_en.html#opcgui'
 
 # See :  http://pypi.python.org/pypi?%3Aaction=list_classifiers
 CLASSIFIERS = ['Development Status :: 4 - Beta',
@@ -66,14 +66,14 @@ CLASSIFIERS = ['Development Status :: 4 - Beta',
                'Topic :: Software Development :: Libraries :: Python Modules',
                'Topic :: Software Development :: Libraries :: Application Frameworks']
 
-KEYWORDS = 'TODO_PYTHON_PACKAGE_NAME'
+KEYWORDS = 'opcgui'
 
 # You can either specify manually the list of packages to include in the
 # distribution or use "setuptools.find_packages()" to include them
 # automatically with a recursive search (from the root directory of the
 # project).
 #PACKAGES = find_packages()
-PACKAGES = ['TODO_PYTHON_PACKAGE_NAME']
+PACKAGES = ['opcgui']
 
 
 # The following list contains all dependencies that Python will try to
