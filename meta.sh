@@ -4,15 +4,15 @@ AUTHOR_WEB_SITE="www.jdhp.org"
 
 COPYRIGHT_NOTICE="Copyright (c) 2019 ${AUTHOR_NAME} (${AUTHOR_WEB_SITE})"
 
-PROJECT_INITIAL_DATE="YYYY-MM-DD"          # TODO
-PROJECT_SHORT_DESC="TODO"                  # TODO one line
+PROJECT_INITIAL_DATE="2019-05-30"
+PROJECT_SHORT_DESC="Opencal Python GUI"
 
-PROJECT_NAME="TODO"                        # TODO e.g. PyAX-12
-PYTHON_PACKAGE_NAME="TODO"                 # TODO e.g. pyax12 (all in lower case and without special character)
+PROJECT_NAME="OpenCAL GUI"
+PYTHON_PACKAGE_NAME="opcgui"
 
-PROJECT_GITHUB_ACCOUNT="jdhp"              # TODO (GitLab)
-#PROJECT_GITHUB_ACCOUNT="jeremiedecock"     # TODO (GitHub)
-PROJECT_GITHUB_REPOSITORY_NAME="TODO"      # TODO
+PROJECT_GITHUB_ACCOUNT="jdhp"               # (GitLab)
+#PROJECT_GITHUB_ACCOUNT="jeremiedecock"     # (GitHub)
+PROJECT_GITHUB_REPOSITORY_NAME="opencal-gui-pyqt"
 
 PROJECT_PYPI_URL="https://pypi.org/project/${PYTHON_PACKAGE_NAME}"
 PROJECT_WEB_SITE_URL="http://www.jdhp.org/software_en.html#${PYTHON_PACKAGE_NAME}"
