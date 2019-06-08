@@ -36,4 +36,6 @@ __version__ = '0.1.dev0'
 def get_version():
     return __version__
 
+APPLICATION_NAME = "OpenCAL"
+
 __all__ = ['TODO']
