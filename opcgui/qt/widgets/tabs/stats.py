@@ -7,7 +7,7 @@ from opcgui.qt.widgets.plot import PlotCanvas
 
 class StatsTab(QWidget):
 
-    def __init__(self, data, parent):
+    def __init__(self, card_list, parent):
         super().__init__(parent=parent)
 
         self.tabs = parent
@@ -15,7 +15,7 @@ class StatsTab(QWidget):
         # See https://matplotlib.org/examples/user_interfaces/embedding_in_qt5.html
 
         vbox = QVBoxLayout(self)
-        self.plot_canvas = PlotCanvas(data, parent=self, width=5, height=4, dpi=100)
+        self.plot_canvas = PlotCanvas(card_list, parent=self, width=5, height=4, dpi=100)
         vbox.addWidget(self.plot_canvas)
 
         ###################################################

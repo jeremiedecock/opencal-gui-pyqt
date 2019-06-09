@@ -5,42 +5,81 @@
 import ctypes
 ctypes.CDLL("libGL.so.1", mode=ctypes.RTLD_GLOBAL)
 
+import datetime
+
 from PyQt5.QtCore import Qt, QModelIndex, QSortFilterProxyModel
 from PyQt5.QtWidgets import QTableView, QWidget, QPushButton, QVBoxLayout, QAbstractItemView, \
-    QAction, QPlainTextEdit, QLineEdit, QHBoxLayout, QVBoxLayout
+    QAction, QPlainTextEdit, QLineEdit, QHBoxLayout, QVBoxLayout, QStackedLayout
 from PyQt5.QtWebEngineWidgets import QWebEngineView
-from PyQt5.QtWidgets import QApplication
+from PyQt5.QtWidgets import QApplication, QSizePolicy
 
 class TestTab(QWidget):
 
-    def __init__(self, data, parent=None):
+    def __init__(self, professor, parent=None):
         super().__init__(parent=parent)
+
+        self.professor = professor
 
         self.tabs = parent
 
         # Make widgets ####################################
 
         self.web_view = QWebEngineView(parent=self)
+        self.control_widget = QWidget(parent=self)
 
-        self.btn_right_answer = QPushButton("Right", parent=self)
-        self.btn_wrong_answer = QPushButton("Wrong", parent=self)
-        self.btn_skip_card = QPushButton("Skip", parent=self)
+        self.navigation_widget = QWidget(parent=self.control_widget)
+        self.answer_widget = QWidget(parent=self.control_widget)
 
-        # Set layouts #####################################
+        self.btn_answer = QPushButton("Answer", parent=self.navigation_widget)
+        self.btn_skip_card = QPushButton("Skip", parent=self.navigation_widget)
+        self.btn_hide_card = QPushButton("Hide", parent=self.navigation_widget)
 
-        self.vbox = QVBoxLayout()
-        self.hbox = QHBoxLayout()
+        self.btn_wrong_answer = QPushButton("Wrong", parent=self.answer_widget)
+        self.btn_right_answer = QPushButton("Right", parent=self.answer_widget)
+
+        # Set SizePolicy ##################################
+
+        self.web_view.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)         # horizontal, vertical
+        self.control_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)       # horizontal, vertical
+        self.navigation_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)    # horizontal, vertical
+        self.answer_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)        # horizontal, vertical
+
+        # Make layouts ####################################
+
+        self.vbox = QVBoxLayout(self)
+
+        self.hbox_navigation = QHBoxLayout(self.navigation_widget)
+        self.hbox_answer = QHBoxLayout(self.answer_widget)
+
+        self.stack_layout = QStackedLayout()
 
         # HBox
 
-        self.hbox.addWidget(self.btn_right_answer)
-        self.hbox.addWidget(self.btn_skip_card)
-        self.hbox.addWidget(self.btn_wrong_answer)
+        self.hbox_navigation.addWidget(self.btn_hide_card)
+        self.hbox_navigation.addWidget(self.btn_answer)
+        self.hbox_navigation.addWidget(self.btn_skip_card)
+
+        self.hbox_answer.addWidget(self.btn_wrong_answer)
+        self.hbox_answer.addWidget(self.btn_right_answer)
 
         # VBox
 
         self.vbox.addWidget(self.web_view)
-        self.vbox.addLayout(self.hbox)
+        self.vbox.addWidget(self.control_widget)
+
+        # StackedLayout
+
+        self.stack_layout.addWidget(self.navigation_widget)
+        self.stack_layout.addWidget(self.answer_widget)
+
+        self.stack_layout.setCurrentWidget(self.navigation_widget)
+
+        # Set layouts #####################################
+
+        self.control_widget.setLayout(self.stack_layout)
+
+        self.navigation_widget.setLayout(self.hbox_navigation)
+        self.answer_widget.setLayout(self.hbox_answer)
 
         self.setLayout(self.vbox)
 
@@ -48,58 +87,84 @@ class TestTab(QWidget):
 
         # see https://stackoverflow.com/a/17631703  and  http://doc.qt.io/qt-5/qaction.html#details
 
-        # Right answer action
+        # Answer action
 
-        right_answer_action = QAction(self.web_view)
-        right_answer_action.setShortcut(Qt.Key_R)
+        answer_action = QAction(self)
+        answer_action.setShortcut(Qt.Key_Space)
+        answer_action.setShortcutContext(Qt.WindowShortcut)
 
-        right_answer_action.triggered.connect(self.right_answer_btn_callback)
-        self.web_view.addAction(right_answer_action)
-
-        # Wrong answer action
-
-        wrong_answer_action = QAction(self.web_view)
-        wrong_answer_action.setShortcut(Qt.Key_W)
-
-        wrong_answer_action.triggered.connect(self.wrong_answer_btn_callback)
-        self.web_view.addAction(wrong_answer_action)
+        answer_action.triggered.connect(self.answer_btn_callback)
+        self.addAction(answer_action)
 
         # Skip card action
 
-        skip_card_action = QAction(self.web_view)
+        skip_card_action = QAction(self)
         skip_card_action.setShortcut(Qt.CTRL | Qt.Key_Delete)
+        skip_card_action.setShortcutContext(Qt.WindowShortcut)
 
         skip_card_action.triggered.connect(self.skip_card_btn_callback)
-        self.web_view.addAction(skip_card_action)
+        self.addAction(skip_card_action)
 
         # Hide card action
 
-        hide_card_action = QAction(self.web_view)
+        hide_card_action = QAction(self)
         hide_card_action.setShortcut(Qt.Key_Delete)
+        hide_card_action.setShortcutContext(Qt.WindowShortcut)
 
         hide_card_action.triggered.connect(self.hide_card_btn_callback)
-        self.web_view.addAction(hide_card_action)
+        self.addAction(hide_card_action)
+
+        # Right answer action
+
+        right_answer_action = QAction(self)
+        right_answer_action.setShortcut(Qt.Key_R)
+
+        right_answer_action.triggered.connect(self.right_answer_btn_callback)
+        self.addAction(right_answer_action)
+
+        # Wrong answer action
+
+        wrong_answer_action = QAction(self)
+        wrong_answer_action.setShortcut(Qt.Key_W)
+
+        wrong_answer_action.triggered.connect(self.wrong_answer_btn_callback)
+        self.addAction(wrong_answer_action)
 
         # Set slots #######################################
 
+        self.btn_answer.clicked.connect(self.answer_btn_callback)
+        self.btn_skip_card.clicked.connect(self.skip_card_btn_callback)
+        self.btn_hide_card.clicked.connect(self.hide_card_btn_callback)
+
         self.btn_right_answer.clicked.connect(self.right_answer_btn_callback)
         self.btn_wrong_answer.clicked.connect(self.wrong_answer_btn_callback)
-        self.btn_skip_card.clicked.connect(self.skip_card_btn_callback)
 
         # Set QWebEngineView ##############################
 
-        self.web_view.setHtml("Hello")         # TODO
+        self.update_html()         # TODO
         self.web_view.show()
 
 
-    def right_answer_btn_callback(self):
-        print("Right")
+    def update_html(self):
+        current_card = self.professor.current_card
+        self.web_view.setHtml(current_card["question"] + 50 * "x<br>")
 
-    def wrong_answer_btn_callback(self):
-        print("Wrong")
+    def answer_btn_callback(self):
+        print("Answer")
+        self.stack_layout.setCurrentWidget(self.answer_widget)
 
     def skip_card_btn_callback(self):
         print("Skip")
 
     def hide_card_btn_callback(self):
         print("Hide")
+
+    def right_answer_btn_callback(self):
+        self.update_html()
+        print("Right")
+        self.stack_layout.setCurrentWidget(self.navigation_widget)
+
+    def wrong_answer_btn_callback(self):
+        self.update_html()
+        print("Wrong")
+        self.stack_layout.setCurrentWidget(self.navigation_widget)

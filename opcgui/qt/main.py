@@ -4,6 +4,8 @@
 import sys
 
 import opencal.io.pkb
+from opencal.core.professor.ben import ProfessorBen
+
 from opcgui.qt.widgets.mainwindow import MainWindow
 from opcgui import APPLICATION_NAME
 
@@ -14,12 +16,13 @@ PKB_PATH = "~/jeremie.pkb"                            # <<< TODO: REMOVE THIS...
 def main():
 
     card_list = opencal.io.pkb.load_pkb(PKB_PATH)
+    professor = ProfessorBen(card_list)
 
     app = QApplication(sys.argv)
     app.setApplicationName(APPLICATION_NAME)
 
     # Make widgets
-    window = MainWindow(card_list)
+    window = MainWindow(professor, card_list)
 
     # The mainloop of the application. The event handling starts from this point.
     # The exec_() method has an underscore. It is because the exec is a Python keyword. And thus, exec_() was used instead.

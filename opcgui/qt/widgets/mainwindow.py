@@ -9,8 +9,11 @@ from opcgui import APPLICATION_NAME
 
 class MainWindow(QMainWindow):
 
-    def __init__(self, card_list):
+    def __init__(self, professor, card_list):
         super().__init__()
+
+        self.professor = professor
+        self.card_list = card_list
 
         self.resize(1200, 900)
         self.setWindowTitle(APPLICATION_NAME)
@@ -22,8 +25,8 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.tabs)
 
         # Add tabs
-        self.daily_test_tab = TestTab(card_list, parent=self.tabs)
-        self.stats_tab = StatsTab(card_list, parent=self.tabs)
+        self.daily_test_tab = TestTab(self.professor, parent=self.tabs)
+        self.stats_tab = StatsTab(self.card_list, parent=self.tabs)
 
         self.tabs.addTab(self.daily_test_tab, "Daily test")
         self.tabs.addTab(self.stats_tab, "Stats")
