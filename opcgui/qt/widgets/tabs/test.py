@@ -7,6 +7,8 @@ ctypes.CDLL("libGL.so.1", mode=ctypes.RTLD_GLOBAL)
 
 import datetime
 
+from opencal.core.data import RIGHT_ANSWER_STR, WRONG_ANSWER_STR
+
 from PyQt5.QtCore import Qt, QModelIndex, QSortFilterProxyModel
 from PyQt5.QtWidgets import QTableView, QWidget, QPushButton, QVBoxLayout, QAbstractItemView, \
     QAction, QPlainTextEdit, QLineEdit, QHBoxLayout, QVBoxLayout, QStackedLayout
@@ -141,30 +143,37 @@ class TestTab(QWidget):
 
         # Set QWebEngineView ##############################
 
-        self.update_html()         # TODO
-        self.web_view.show()
+        self.update_html(show_answer=False)
 
 
-    def update_html(self):
+    def update_html(self, show_answer=False):
         current_card = self.professor.current_card
-        self.web_view.setHtml(current_card["question"] + 50 * "x<br>")
+
+        html = current_card["question"]
+        if show_answer:
+            html += "<br>"
+            html += current_card["answer"]
+
+        self.web_view.setHtml(html)
 
     def answer_btn_callback(self):
-        print("Answer")
         self.stack_layout.setCurrentWidget(self.answer_widget)
+        self.update_html(show_answer=True)
 
     def skip_card_btn_callback(self):
-        print("Skip")
+        self.professor.current_card_reply(answer="skip", duration=None, confidence=None)
+        self.update_html(show_answer=False)
 
     def hide_card_btn_callback(self):
-        print("Hide")
+        self.professor.current_card_reply(answer="hide", duration=None, confidence=None)
+        self.update_html(show_answer=False)
 
     def right_answer_btn_callback(self):
-        self.update_html()
-        print("Right")
+        self.professor.current_card_reply(answer=RIGHT_ANSWER_STR, duration=None, confidence=None)
         self.stack_layout.setCurrentWidget(self.navigation_widget)
+        self.update_html(show_answer=False)
 
     def wrong_answer_btn_callback(self):
-        self.update_html()
-        print("Wrong")
+        self.professor.current_card_reply(answer=WRONG_ANSWER_STR, duration=None, confidence=None)
         self.stack_layout.setCurrentWidget(self.navigation_widget)
+        self.update_html(show_answer=False)
