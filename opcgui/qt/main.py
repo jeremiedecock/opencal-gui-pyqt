@@ -11,7 +11,7 @@ from opcgui import APPLICATION_NAME
 
 from PyQt5.QtWidgets import QApplication
 
-PKB_PATH = "~/jeremie.pkb"                            # <<< TODO: REMOVE THIS...
+PKB_PATH = "~/test.pkb"                            # <<< TODO: REMOVE THIS...
 
 def main():
 

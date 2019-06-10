@@ -6,10 +6,12 @@ import ctypes
 ctypes.CDLL("libGL.so.1", mode=ctypes.RTLD_GLOBAL)
 
 import datetime
+import os
+import re
 
 from opencal.core.data import RIGHT_ANSWER_STR, WRONG_ANSWER_STR
 
-from PyQt5.QtCore import Qt, QModelIndex, QSortFilterProxyModel
+from PyQt5.QtCore import Qt, QModelIndex, QSortFilterProxyModel, QUrl
 from PyQt5.QtWidgets import QTableView, QWidget, QPushButton, QVBoxLayout, QAbstractItemView, \
     QAction, QPlainTextEdit, QLineEdit, QHBoxLayout, QVBoxLayout, QStackedLayout
 from PyQt5.QtWebEngineWidgets import QWebEngineView
@@ -25,16 +27,13 @@ HTML = '''<!DOCTYPE html>
 
     {}
 
-    <script type="text/javascript" src="{}"></script>
+    <script type="text/javascript" src="mathjax/MathJax.js?config=TeX-AMS_HTML-full"></script>
 </head>
 <body>
     {}
 </body>
 </html>
 '''
-
-# TODO
-MATHJAX_DEFAULT_PATH = "/usr/share/javascript/mathjax/MathJax.js?config=TeX-AMS_HTML-full";  # TODO: so far, this path is only valid for debian; include mathjax source code within the jar file or at least put it in a common directory...
 
 MATHJAX = r'''<script type="text/x-mathjax-config">
         MathJax.Hub.Config({
@@ -177,10 +176,63 @@ INFORMATION = '''<div id="informations">
     </span>
 </div>'''
 
+
+def replace_html_special_chars(src):
+    """Replace the five reserved characters with entities to avoid HTML interpretation of src.
+    
+    Parameters
+    ----------
+    src : str
+        The string to process.
+
+    Returns
+    -------
+    str
+        A string without HTML tags.
+    """
+
+    src = src.replace("&", "&amp;")
+    src = src.replace("<", "&lt;")
+    src = src.replace(">", "&gt;")
+    src = src.replace("\"", "&quot;")
+    src = src.replace("\'", "&apos;")
+    
+    return src
+
+IMG_SUB_PATTERN = r"&lt;img file=&quot;([0-9abcdef]{32}.(png|jpg|jpeg|gif))&quot; /&gt;"
+AUDIO_SUB_PATTERN = r"&lt;audio file=&quot;([0-9abcdef]{32}.(ogg|oga|flac|spx|wav|mp3))&quot; /&gt;"
+VIDEO_SUB_PATTERN = r"&lt;video file=&quot;([0-9abcdef]{32}.(ogv|vp8|avi|mp4|mpg|wmv|mov))&quot; /&gt;"
+
+img_sub_regex = re.compile(IMG_SUB_PATTERN)       # TODO: put this in a class
+audio_sub_regex = re.compile(AUDIO_SUB_PATTERN)   # TODO: put this in a class
+video_sub_regex = re.compile(VIDEO_SUB_PATTERN)   # TODO: put this in a class
+
+def question_answer_to_html(question_or_answer):
+
+    html = replace_html_special_chars(question_or_answer)
+
+    # Make html image tags
+
+    html = img_sub_regex.sub(r'<img src="materials/\1" />', html)
+        
+    # Make html audio tags
+
+    html = audio_sub_regex.sub(r'<audio controls src="materials/\1" />Your browser does not support the audio tag.<audio/>', html)
+
+    # Make html video tags
+
+    html = video_sub_regex.sub(r'<video controls src="materials/\1" />Your browser does not support the video tag.<video/>', html)
+
+    return html
+
+
 class TestTab(QWidget):
 
-    def __init__(self, professor, parent=None):
+    def __init__(self, professor, context_directory, parent=None):
         super().__init__(parent=parent)
+
+        self.context_directory = context_directory
+        self.base_url = QUrl.fromLocalFile(self.context_directory.name + "/")  # Rem: this doesn't work without the last '/' : see https://stackoverflow.com/questions/18196069/qwebview-setbaseurl-doesnt-work
 
         self.professor = professor
 
@@ -333,7 +385,7 @@ class TestTab(QWidget):
 
             html_body += r'<h1 class="question">Question</h1>'
             html_body += r'<div class="question">'
-            html_body += current_card["question"]
+            html_body += question_answer_to_html(current_card["question"])
             html_body += r'</div>'
 
             # Answer
@@ -341,14 +393,17 @@ class TestTab(QWidget):
             if show_answer:
                 html_body += r'<h1 class="answer">Answer</h1>'
                 html_body += r'<div class="answer">'
-                html_body += current_card["answer"]
+                html_body += question_answer_to_html(current_card["answer"])
                 html_body += r'</div>'
         else:
             html_body = r'<div id="empty">Empty selection</div>'
 
-        html = HTML.format(CSS, MATHJAX, "", html_body)
+        html = HTML.format(CSS, MATHJAX, html_body)
 
-        self.web_view.setHtml(html)
+        #with open("/tmp/opcgui_card_debug.html", "w") as fd:
+        #    print(html, file=fd)
+
+        self.web_view.setHtml(html, self.base_url)
 
     def answer_btn_callback(self):
         self.stack_layout.setCurrentWidget(self.answer_widget)

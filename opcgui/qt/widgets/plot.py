@@ -29,13 +29,16 @@ def plot_card_addition(df, ax):
     #tk1 = list(reversed(-np.arange(0, -df.wushift.min(), 30)))
     #tk2 = list(np.arange(0, df.wushift.max(), 30))
 
-    df.loc[df.cdate > datetime.datetime.now() - datetime.timedelta(days=30)].groupby("cdate").hidden.count().plot(x='cdate',
-                                                                                                                  y='hidden',
-                                                                                                                  kind='bar',
-                                                                                                                  color=BLUE,
-                                                                                                                  #yticks=tk1 + tk2,
-                                                                                                                  ax=ax)
-    
+    try:
+        df.loc[df.cdate > datetime.datetime.now() - datetime.timedelta(days=30)].groupby("cdate").hidden.count().plot(x='cdate',
+                                                                                                                    y='hidden',
+                                                                                                                    kind='bar',
+                                                                                                                    color=BLUE,
+                                                                                                                    #yticks=tk1 + tk2,
+                                                                                                                    ax=ax)
+    except TypeError as e:
+        pass
+
     # set locator
     #self.ax2.xaxis.set_major_locator(mdates.WeekdayLocator(byweekday=MO))
     ##self.ax2.xaxis.set_minor_locator(mdates.DayLocator(interval=1))
