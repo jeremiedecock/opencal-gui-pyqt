@@ -179,7 +179,7 @@ INFORMATION = '''<div id="informations">
 
 def replace_html_special_chars(src):
     """Replace the five reserved characters with entities to avoid HTML interpretation of src.
-    
+
     Parameters
     ----------
     src : str
@@ -196,7 +196,7 @@ def replace_html_special_chars(src):
     src = src.replace(">", "&gt;")
     src = src.replace("\"", "&quot;")
     src = src.replace("\'", "&apos;")
-    
+
     return src
 
 IMG_SUB_PATTERN = r"&lt;img file=&quot;([0-9abcdef]{32}.(png|jpg|jpeg|gif))&quot; /&gt;"
@@ -214,7 +214,7 @@ def question_answer_to_html(question_or_answer):
     # Make html image tags
 
     html = img_sub_regex.sub(r'<img src="materials/\1" />', html)
-        
+
     # Make html audio tags
 
     html = audio_sub_regex.sub(r'<audio controls src="materials/\1" />Your browser does not support the audio tag.<audio/>', html)
