@@ -33,6 +33,9 @@ HTML = '''<!DOCTYPE html>
 </html>
 '''
 
+# TODO
+MATHJAX_DEFAULT_PATH = "/usr/share/javascript/mathjax/MathJax.js?config=TeX-AMS_HTML-full";  # TODO: so far, this path is only valid for debian; include mathjax source code within the jar file or at least put it in a common directory...
+
 MATHJAX = r'''<script type="text/x-mathjax-config">
         MathJax.Hub.Config({
             tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
