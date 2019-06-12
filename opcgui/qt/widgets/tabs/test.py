@@ -369,7 +369,7 @@ class TestTab(QWidget):
 
             reviews_str = '\n'.join(['{} : {}'.format(review['rdate'].date().isoformat(), review['result']) for review in current_card["reviews"]])
 
-            grade = ''    # TODO
+            grade = current_card['grade']
 
             html_body = INFORMATION.format(current_card["cdate"].date().isoformat(),
                                            reviews_str,
