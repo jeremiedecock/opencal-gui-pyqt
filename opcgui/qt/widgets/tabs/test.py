@@ -406,23 +406,28 @@ class TestTab(QWidget):
         self.web_view.setHtml(html, self.base_url)
 
     def answer_btn_callback(self):
-        self.stack_layout.setCurrentWidget(self.answer_widget)
-        self.update_html(show_answer=True)
+        if self.stack_layout.currentWidget() == self.navigation_widget:
+            self.stack_layout.setCurrentWidget(self.answer_widget)
+            self.update_html(show_answer=True)
 
     def skip_card_btn_callback(self):
-        self.professor.current_card_reply(answer="skip", duration=None, confidence=None)
-        self.update_html(show_answer=False)
+        if self.stack_layout.currentWidget() == self.navigation_widget:
+            self.professor.current_card_reply(answer="skip", duration=None, confidence=None)
+            self.update_html(show_answer=False)
 
     def hide_card_btn_callback(self):
-        self.professor.current_card_reply(answer="hide", duration=None, confidence=None)
-        self.update_html(show_answer=False)
+        if self.stack_layout.currentWidget() == self.navigation_widget:
+            self.professor.current_card_reply(answer="hide", duration=None, confidence=None)
+            self.update_html(show_answer=False)
 
     def right_answer_btn_callback(self):
-        self.professor.current_card_reply(answer=RIGHT_ANSWER_STR, duration=None, confidence=None)
-        self.stack_layout.setCurrentWidget(self.navigation_widget)
-        self.update_html(show_answer=False)
+        if self.stack_layout.currentWidget() == self.answer_widget:
+            self.professor.current_card_reply(answer=RIGHT_ANSWER_STR, duration=None, confidence=None)
+            self.stack_layout.setCurrentWidget(self.navigation_widget)
+            self.update_html(show_answer=False)
 
     def wrong_answer_btn_callback(self):
-        self.professor.current_card_reply(answer=WRONG_ANSWER_STR, duration=None, confidence=None)
-        self.stack_layout.setCurrentWidget(self.navigation_widget)
-        self.update_html(show_answer=False)
+        if self.stack_layout.currentWidget() == self.answer_widget:
+            self.professor.current_card_reply(answer=WRONG_ANSWER_STR, duration=None, confidence=None)
+            self.stack_layout.setCurrentWidget(self.navigation_widget)
+            self.update_html(show_answer=False)
