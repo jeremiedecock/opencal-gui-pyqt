@@ -315,7 +315,7 @@ class TestTab(QWidget):
         # Skip card action
 
         skip_card_action = QAction(self)
-        skip_card_action.setShortcut(Qt.CTRL | Qt.Key_Delete)
+        skip_card_action.setShortcut(Qt.CTRL | Qt.Key_Space)
         skip_card_action.setShortcutContext(Qt.WindowShortcut)
 
         skip_card_action.triggered.connect(self.skip_card_btn_callback)
@@ -324,7 +324,7 @@ class TestTab(QWidget):
         # Hide card action
 
         hide_card_action = QAction(self)
-        hide_card_action.setShortcut(Qt.Key_Delete)
+        hide_card_action.setShortcut(Qt.SHIFT | Qt.Key_Space)
         hide_card_action.setShortcutContext(Qt.WindowShortcut)
 
         hide_card_action.triggered.connect(self.hide_card_btn_callback)
@@ -333,7 +333,7 @@ class TestTab(QWidget):
         # Right answer action
 
         right_answer_action = QAction(self)
-        right_answer_action.setShortcut(Qt.Key_R)
+        right_answer_action.setShortcut(Qt.Key_L)
 
         right_answer_action.triggered.connect(self.right_answer_btn_callback)
         self.addAction(right_answer_action)
@@ -341,10 +341,26 @@ class TestTab(QWidget):
         # Wrong answer action
 
         wrong_answer_action = QAction(self)
-        wrong_answer_action.setShortcut(Qt.Key_W)
+        wrong_answer_action.setShortcut(Qt.Key_H)
 
         wrong_answer_action.triggered.connect(self.wrong_answer_btn_callback)
         self.addAction(wrong_answer_action)
+
+        # Right answer action + hide
+
+        right_answer_and_hide_action = QAction(self)
+        right_answer_and_hide_action.setShortcut(Qt.SHIFT | Qt.Key_L)
+
+        right_answer_and_hide_action.triggered.connect(self.right_answer_and_hide_callback)
+        self.addAction(right_answer_and_hide_action)
+
+        # Wrong answer action + hide
+
+        wrong_answer_and_hide_action = QAction(self)
+        wrong_answer_and_hide_action.setShortcut(Qt.SHIFT | Qt.Key_H)
+
+        wrong_answer_and_hide_action.triggered.connect(self.wrong_answer_and_hide_callback)
+        self.addAction(wrong_answer_and_hide_action)
 
         # Set slots #######################################
 
@@ -417,17 +433,23 @@ class TestTab(QWidget):
 
     def hide_card_btn_callback(self):
         if self.stack_layout.currentWidget() == self.navigation_widget:
-            self.professor.current_card_reply(answer="hide", duration=None, confidence=None)
+            self.professor.current_card_reply(answer="skip", hide=True, duration=None, confidence=None)
             self.update_html(show_answer=False)
 
-    def right_answer_btn_callback(self):
+    def right_answer_btn_callback(self, hide=False):
         if self.stack_layout.currentWidget() == self.answer_widget:
-            self.professor.current_card_reply(answer=RIGHT_ANSWER_STR, duration=None, confidence=None)
+            self.professor.current_card_reply(answer=RIGHT_ANSWER_STR, hide=hide, duration=None, confidence=None)
             self.stack_layout.setCurrentWidget(self.navigation_widget)
             self.update_html(show_answer=False)
 
-    def wrong_answer_btn_callback(self):
+    def wrong_answer_btn_callback(self, hide=False):
         if self.stack_layout.currentWidget() == self.answer_widget:
-            self.professor.current_card_reply(answer=WRONG_ANSWER_STR, duration=None, confidence=None)
+            self.professor.current_card_reply(answer=WRONG_ANSWER_STR, hide=hide, duration=None, confidence=None)
             self.stack_layout.setCurrentWidget(self.navigation_widget)
             self.update_html(show_answer=False)
+
+    def right_answer_and_hide_callback(self):
+        self.right_answer_btn_callback(hide=True)
+
+    def wrong_answer_and_hide_callback(self):
+        self.wrong_answer_btn_callback(hide=True)
