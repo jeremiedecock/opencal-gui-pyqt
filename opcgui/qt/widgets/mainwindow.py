@@ -30,7 +30,7 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.tabs)
 
         # Add tabs
-        self.daily_test_tab = TestTab(self.professor, self.context_directory, parent=self.tabs)
+        self.daily_test_tab = TestTab(self.professor, self.context_directory, main_window=self, parent=self.tabs)
         self.stats_tab = StatsTab(self.card_list, parent=self.tabs)
 
         self.tabs.addTab(self.daily_test_tab, "Daily test")

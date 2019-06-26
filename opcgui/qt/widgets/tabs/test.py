@@ -228,7 +228,7 @@ def question_answer_to_html(question_or_answer):
 
 class TestTab(QWidget):
 
-    def __init__(self, professor, context_directory, parent=None):
+    def __init__(self, professor, context_directory, main_window, parent=None):
         super().__init__(parent=parent)
 
         self.context_directory = context_directory
@@ -237,6 +237,7 @@ class TestTab(QWidget):
         self.professor = professor
 
         self.tabs = parent
+        self.main_window = main_window
 
         # Make widgets ####################################
 
@@ -430,23 +431,33 @@ class TestTab(QWidget):
         if self.stack_layout.currentWidget() == self.navigation_widget:
             self.professor.current_card_reply(answer="skip", duration=None, confidence=None)
             self.update_html(show_answer=False)
+            self.main_window.statusBar().showMessage("Skip", 2000)
 
     def hide_card_btn_callback(self):
         if self.stack_layout.currentWidget() == self.navigation_widget:
             self.professor.current_card_reply(answer="skip", hide=True, duration=None, confidence=None)
             self.update_html(show_answer=False)
+            self.main_window.statusBar().showMessage("Hide", 2000)
 
     def right_answer_btn_callback(self, hide=False):
         if self.stack_layout.currentWidget() == self.answer_widget:
             self.professor.current_card_reply(answer=RIGHT_ANSWER_STR, hide=hide, duration=None, confidence=None)
             self.stack_layout.setCurrentWidget(self.navigation_widget)
             self.update_html(show_answer=False)
+            if hide:
+                self.main_window.statusBar().showMessage("Right answer (hide)", 2000)
+            else:
+                self.main_window.statusBar().showMessage("Right answer", 2000)
 
     def wrong_answer_btn_callback(self, hide=False):
         if self.stack_layout.currentWidget() == self.answer_widget:
             self.professor.current_card_reply(answer=WRONG_ANSWER_STR, hide=hide, duration=None, confidence=None)
             self.stack_layout.setCurrentWidget(self.navigation_widget)
             self.update_html(show_answer=False)
+            if hide:
+                self.main_window.statusBar().showMessage("Wrong answer (hide)", 2000)
+            else:
+                self.main_window.statusBar().showMessage("Wrong answer", 2000)
 
     def right_answer_and_hide_callback(self):
         self.right_answer_btn_callback(hide=True)
