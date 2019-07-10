@@ -12,9 +12,10 @@ import tempfile
 
 class MainWindow(QMainWindow):
 
-    def __init__(self, professor, card_list):
+    def __init__(self, professor, card_list, app_config):
         super().__init__()
 
+        self.app_config = app_config
         self.context_directory = tempfile.TemporaryDirectory()  # Make a temporary directory to store external files (JS, medias, ...)
 
         self.professor = professor
@@ -43,13 +44,13 @@ class MainWindow(QMainWindow):
         # Mathjax
 
         # Install MathJax on Debian: "aptitude install libjs-mathjax"
-        mathjax_src_path = '/usr/share/javascript/mathjax'                        # TODO : this only works on Debian -> should provide mathjax ?
+        mathjax_src_path = self.app_config['mathjax_path']
         mathjax_dst_path = os.path.join(self.context_directory.name, "mathjax")
         os.symlink(mathjax_src_path, mathjax_dst_path)
 
         # Cards media (images, audio and video files)
 
-        medias_src_path = os.path.expanduser('~/.opencal/materials')              # TODO : this only works on Unix
+        medias_src_path = os.path.expanduser(self.app_config['pkb_medias_path'])
         medias_dst_path = os.path.join(self.context_directory.name, "materials")
         os.symlink(medias_src_path, medias_dst_path)
 
