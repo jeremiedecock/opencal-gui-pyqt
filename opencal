@@ -6,8 +6,12 @@ then
 else
     touch ~/opencal.lock
 
+    OPC=$(python -c "import opcgui.qt.main ; print(opcgui.qt.main.__file__)")
+
     # TODO: WORKAROUND https://forum.qt.io/topic/54802/linux-application-does-not-accept-keyboard-input/4
-    QT_XKB_CONFIG_ROOT=/usr/share/X11/xkb ./opcgui/qt/main.py
+    QT_XKB_CONFIG_ROOT=/usr/share/X11/xkb $OPC
+
+    #./opcgui/qt/main.py
 
     rm ~/opencal.lock
 fi
