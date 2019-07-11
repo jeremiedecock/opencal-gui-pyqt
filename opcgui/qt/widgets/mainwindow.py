@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from PyQt5.QtWidgets import QMainWindow, QTabWidget
+from opencal.core.professor.ben import ProfessorBen
 
 from opcgui.qt.widgets.tabs.test import TestTab
 from opcgui.qt.widgets.tabs.stats import StatsTab
@@ -10,20 +10,28 @@ from opcgui import APPLICATION_NAME
 import os
 import tempfile
 
+from PyQt5.QtWidgets import QMainWindow, QTabWidget
+
 class MainWindow(QMainWindow):
 
-    def __init__(self, professor, card_list, app_config):
+    def __init__(self, card_list, app_config):
         super().__init__()
 
-        self.app_config = app_config
-        self.context_directory = tempfile.TemporaryDirectory()  # Make a temporary directory to store external files (JS, medias, ...)
-
-        self.professor = professor
         self.card_list = card_list
+        self.app_config = app_config
+
+        self.context_directory = tempfile.TemporaryDirectory()  # Make a temporary directory to store external files (JS, medias, ...)
 
         self.resize(1200, 900)
         self.setWindowTitle(APPLICATION_NAME)
         self.statusBar().showMessage("Ready", 2000)
+
+        # Set Professor ###################################
+
+        if self.app_config["ltm_professor"] == "ben":
+            self.professor = ProfessorBen(self.card_list)
+        else:
+            raise ValueError('Unknown professor "{}"'.format(self.app_config["professor"]))
 
         # Make widgets ####################################
 
