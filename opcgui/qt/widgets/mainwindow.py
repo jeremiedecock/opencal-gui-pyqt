@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from opencal.core.professor.ben import ProfessorBen
+from opencal.core.professor.ltm.ben import ProfessorBen
 
 from opcgui.qt.widgets.tabs.test import TestTab
 from opcgui.qt.widgets.tabs.stats import StatsTab
