@@ -143,7 +143,7 @@ clean:
 	@rm -rvf *.egg-info/
 	@rm -rvf htmlcov/
 	@rm -rvf debian
-	@rm -v MANIFEST
+	@rm -vf MANIFEST
 	@find . -type d -iname "__pycache__" -exec rm -rfv {} \;
 	@find . -type f -iname "*.pyc" -exec rm -v {} \;
 	@find . -type f -iname "*.pyo" -exec rm -v {} \;
