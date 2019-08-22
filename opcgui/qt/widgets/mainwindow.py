@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from opencal.core.professor.ltm.ben import ProfessorBen
+from opencal.core.professor.ltm.alice import ProfessorAlice
 
 from opcgui.qt.widgets.tabs.test import TestTab
 from opcgui.qt.widgets.tabs.stats import StatsTab
@@ -28,8 +28,8 @@ class MainWindow(QMainWindow):
 
         # Set Professor ###################################
 
-        if self.app_config["ltm_professor"] == "ben":
-            self.professor = ProfessorBen(self.card_list)
+        if self.app_config["ltm_professor"] == "alice":
+            self.professor = ProfessorAlice(self.card_list)
         else:
             raise ValueError('Unknown professor "{}"'.format(self.app_config["professor"]))
 
