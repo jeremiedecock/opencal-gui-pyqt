@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from opencal.core.professor.ltm.alice import ProfessorAlice
+from opencal.core.professor.ltm.berenice import ProfessorBerenice
 
 from opcgui.qt.widgets.tabs.test import TestTab
 from opcgui.qt.widgets.tabs.stats import StatsTab
@@ -30,6 +31,8 @@ class MainWindow(QMainWindow):
 
         if self.app_config["ltm_professor"] == "alice":
             self.professor = ProfessorAlice(self.card_list)
+        elif self.app_config["ltm_professor"] == "berenice":
+            self.professor = ProfessorBerenice(self.card_list)
         else:
             raise ValueError('Unknown professor "{}"'.format(self.app_config["professor"]))
 
