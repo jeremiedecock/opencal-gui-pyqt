@@ -322,6 +322,15 @@ class TestTab(QWidget):
         skip_card_action.triggered.connect(self.skip_card_btn_callback)
         self.addAction(skip_card_action)
 
+        # Skip level action
+
+        skip_level_action = QAction(self)
+        skip_level_action.setShortcut(Qt.Key_PageUp)
+        skip_level_action.setShortcutContext(Qt.WindowShortcut)
+
+        skip_level_action.triggered.connect(self.skip_level_callback)
+        self.addAction(skip_level_action)
+
         # Hide card action
 
         hide_card_action = QAction(self)
@@ -432,6 +441,12 @@ class TestTab(QWidget):
             self.professor.current_card_reply(answer="skip", duration=None, confidence=None)
             self.update_html(show_answer=False)
             self.main_window.statusBar().showMessage("Skip", 2000)
+
+    def skip_level_callback(self):
+        if self.stack_layout.currentWidget() == self.navigation_widget:
+            self.professor.current_card_reply(answer="skip level", duration=None, confidence=None)
+            self.update_html(show_answer=False)
+            self.main_window.statusBar().showMessage("Skip level", 2000)
 
     def hide_card_btn_callback(self):
         if self.stack_layout.currentWidget() == self.navigation_widget:
