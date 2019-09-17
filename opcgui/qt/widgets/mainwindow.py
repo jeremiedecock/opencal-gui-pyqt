@@ -5,6 +5,8 @@ from opencal.core.professor.ltm.alice import ProfessorAlice
 from opencal.core.professor.ltm.berenice import ProfessorBerenice
 
 from opcgui.qt.widgets.tabs.test import TestTab
+from opcgui.qt.widgets.tabs.forwardtest import ForwardTestTab
+from opcgui.qt.widgets.tabs.review import ReviewTab
 from opcgui.qt.widgets.tabs.stats import StatsTab
 from opcgui import APPLICATION_NAME
 
@@ -44,9 +46,13 @@ class MainWindow(QMainWindow):
 
         # Add tabs
         self.daily_test_tab = TestTab(self.professor, self.context_directory, main_window=self, parent=self.tabs)
+        self.forward_test_tab = ForwardTestTab(self.card_list, self.context_directory, main_window=self, parent=self.tabs)
+        self.review_tab = ReviewTab(self.card_list, self.context_directory, main_window=self, parent=self.tabs)
         self.stats_tab = StatsTab(self.card_list, parent=self.tabs)
 
         self.tabs.addTab(self.daily_test_tab, "Daily test")
+        self.tabs.addTab(self.forward_test_tab, "Forward test")
+        self.tabs.addTab(self.review_tab, "Review")
         self.tabs.addTab(self.stats_tab, "Stats")
 
         # Make the context directory ######################
