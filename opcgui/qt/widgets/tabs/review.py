@@ -5,6 +5,7 @@ import datetime
 
 from opencal.core.professor.itm.ralph import ProfessorRalph
 from opencal.core.professor.itm.randy import ProfessorRandy
+from opencal.core.data import RIGHT_ANSWER_STR, WRONG_ANSWER_STR
 
 from opcgui.qt.widgets.test import TestWidget
 
@@ -65,12 +66,12 @@ class ReviewTab(QWidget):
         self.test_widget.update_html()
 
 
-def has_been_reviewed_today(card, today):
+def has_been_reviewed_today(card, today, wrong_answers_only=True):
     ret = False
 
     if "reviews" in card.keys():
         for review in card["reviews"]:
-            if datetime_to_date(review["rdate"]) == today:
+            if (datetime_to_date(review["rdate"]) == today) and ((not wrong_answers_only) or (review["result"] == WRONG_ANSWER_STR)):
                 ret = True
     
     return ret
