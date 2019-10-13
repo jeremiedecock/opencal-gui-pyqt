@@ -8,6 +8,8 @@ from opcgui.qt.widgets.test import TestWidget
 
 from PyQt5.QtWidgets import QWidget, QComboBox, QVBoxLayout
 
+import datetime
+
 class ForwardTestTab(QWidget):
 
     def __init__(self, card_list, context_directory, main_window, parent=None):
@@ -44,7 +46,46 @@ class ForwardTestTab(QWidget):
     def update_selection(self, index):
         selected_tag = self.combo_tag_selection.currentText()
 
-        self.current_card_list = [card for card in self.orig_card_list if selected_tag in card["tags"]]
+        self.current_card_list = [card for card in self.orig_card_list if review_card(card, selected_tag)]
         self.professor.update_card_list(self.current_card_list)
 
         self.test_widget.update_html()
+
+
+def datetime_to_date(d):
+    '''If the object is an instance of datetime.datetime then convert it to a datetime.datetime.date object.
+
+    If it's already a date object, do nothing.'''
+
+    if isinstance(d, datetime.datetime):
+        d = d.date()
+    return d
+
+
+def review_card(card, selected_tag, date_mock=None):
+
+    if date_mock is None:
+        today = datetime.date.today()
+    else:
+        today = date_mock.today()
+
+    if card["hidden"]:
+        return False
+
+    if not selected_tag in card["tags"]:
+        return False
+
+    if datetime_to_date(card["cdate"]) == today:
+        return False
+
+    if "reviews" not in card.keys():
+        return True
+
+    if len(card["reviews"]) == 0:
+        return True
+
+    card_not_reviewed_today = all([datetime_to_date(review["rdate"]) < today for review in card["reviews"]])
+    if card_not_reviewed_today:
+        return True
+    else:
+        return False
