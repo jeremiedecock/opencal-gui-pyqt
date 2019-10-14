@@ -11,6 +11,7 @@ import re
 import time
 
 from opencal.core.data import RIGHT_ANSWER_STR, WRONG_ANSWER_STR
+from opcgui.utils import datetime_to_date
 
 from PyQt5.QtCore import Qt, QModelIndex, QSortFilterProxyModel, QUrl
 from PyQt5.QtWidgets import QTableView, QWidget, QPushButton, QVBoxLayout, QAbstractItemView, \
@@ -437,11 +438,11 @@ class TestWidget(QWidget):
 
             # Informations
 
-            reviews_str = '\n'.join(['{} : {}'.format(review['rdate'].date().isoformat(), review['result']) for review in current_card["reviews"]])
+            reviews_str = '\n'.join(['{} : {}'.format(datetime_to_date(review['rdate']).isoformat(), review['result']) for review in current_card["reviews"]])
 
             grade = current_card['grade']
 
-            html_body = INFORMATION.format(current_card["cdate"].date().isoformat(),
+            html_body = INFORMATION.format(datetime_to_date(current_card["cdate"]).isoformat(),
                                            reviews_str,
                                            len(current_card["reviews"]),
                                            grade)
