@@ -5,6 +5,7 @@ from opencal.core.professor.ltm.brutus import ProfessorBrutus
 from opencal.core.tags import tag_list
 
 from opcgui.qt.widgets.test import TestWidget
+from opcgui.utils import datetime_to_date
 
 from PyQt5.QtWidgets import QWidget, QComboBox, QVBoxLayout
 
@@ -50,16 +51,6 @@ class ForwardTestTab(QWidget):
         self.professor.update_card_list(self.current_card_list)
 
         self.test_widget.update_html()
-
-
-def datetime_to_date(d):
-    '''If the object is an instance of datetime.datetime then convert it to a datetime.datetime.date object.
-
-    If it's already a date object, do nothing.'''
-
-    if isinstance(d, datetime.datetime):
-        d = d.date()
-    return d
 
 
 def review_card(card, selected_tag, date_mock=None):
