@@ -4,7 +4,10 @@
 import datetime
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QSplitter, QPlainTextEdit, QPushButton
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QSplitter, QPushButton
+
+from opcgui.qt.widgets.richtexteditor import RichTextEditor
+from opcgui.qt.widgets.tagseditor import TagsEditor
 
 class AddCardsTab(QWidget):
 
@@ -19,13 +22,9 @@ class AddCardsTab(QWidget):
 
         self.splitter = QSplitter(orientation=Qt.Vertical, parent=self)
 
-        self.question_editor = QPlainTextEdit()             # TODO: use the home made "RichTextEditor" widget instead
-        self.answer_editor = QPlainTextEdit()               # TODO: use the home made "RichTextEditor" widget instead
-        self.tags_editor = QPlainTextEdit()
-
-        self.question_editor.setPlaceholderText("Question")
-        self.answer_editor.setPlaceholderText("Answer")
-        self.tags_editor.setPlaceholderText("Tags")
+        self.question_editor = RichTextEditor(context_directory=self.context_directory, parent=self, placeholder_text="Question")
+        self.answer_editor = RichTextEditor(context_directory=self.context_directory, parent=self, placeholder_text="Answer")
+        self.tags_editor = TagsEditor(self.card_list, parent=self)
 
         self.tags_editor.setMaximumHeight(18 * 4)           # TODO: define height as 4 times the font height
 
