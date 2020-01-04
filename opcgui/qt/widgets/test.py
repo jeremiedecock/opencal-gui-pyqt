@@ -211,6 +211,12 @@ INFORMATION = '''<div id="informations">
     </span> - 
     <span class="information">
         Level <span class="highlight">{}</span>
+    </span> - 
+    <span class="information">
+        Priority <span class="highlight">{}</span>
+    </span> - 
+    <span class="information">
+        Difficulty <span class="highlight">{}</span>
     </span>
 </div>'''
 
@@ -442,10 +448,22 @@ class TestWidget(QWidget):
 
             grade = current_card['grade']
 
+            if "priority" in current_card:
+                priority = current_card["priority"]
+            else:
+                priority = "n.c."
+            
+            if "difficulty" in current_card:
+                difficulty = current_card["difficulty"]
+            else:
+                difficulty = "n.c."
+
             html_body = INFORMATION.format(datetime_to_date(current_card["cdate"]).isoformat(),
                                            reviews_str,
                                            len(current_card["reviews"]),
-                                           grade)
+                                           grade,
+                                           priority,
+                                           difficulty)
 
             # Tags
 
