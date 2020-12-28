@@ -3,6 +3,7 @@
 
 from opencal.core.professor.ltm.alice import ProfessorAlice
 from opencal.core.professor.ltm.berenice import ProfessorBerenice
+from opencal.core.professor.ltm.celia import ProfessorCelia
 
 from opcgui.qt.widgets.tabs.test import TestTab
 from opcgui.qt.widgets.tabs.add import AddCardsTab
@@ -38,6 +39,9 @@ class MainWindow(QMainWindow):
         elif self.app_config["ltm_professor"] == "berenice":
             berenice_config = {key: value for key, value in self.app_config.items() if key in ("max_cards_per_grade", "tag_priority_dict", "tag_difficulty_dict", "reverse_level_0")}
             self.professor = ProfessorBerenice(self.card_list, **berenice_config)
+        elif self.app_config["ltm_professor"] == "celia":
+            celia_config = {key: value for key, value in self.app_config.items() if key in ("max_cards_per_grade", "tag_priority_dict", "tag_difficulty_dict", "reverse_level_0")}
+            self.professor = ProfessorCelia(self.card_list, **celia_config)
         else:
             raise ValueError('Unknown professor "{}"'.format(self.app_config["professor"]))
 
