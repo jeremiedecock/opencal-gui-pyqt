@@ -1,15 +1,15 @@
 #!/bin/bash
 
-LOG_PATH=~/.time-mg-opc.csv  # TIME MG TIME TRACKER
+LOG_PATH=~/data_timemg/time-mg-opc.csv  # TIME MG TIME TRACKER
 
 echo ""
 echo "Shortkeys:"
-echo "- Answer action: ............... Space"
+echo "- Answer action: ............... Space            ('Fullscreen' on remote controls)"
 echo "- Skip card action: ............ CTRL + Space"
-echo "- Skip level action: ........... PageUp"
+echo "- Skip level action: ........... CTRL + PageUp    ('Echap' on remote controls)"
 echo "- Hide card action: ............ SHIFT + Space"
-echo "- Right answer action: ......... L"
-echo "- Wrong answer action: ......... H"
+echo "- Right answer action: ......... L                ('>' on remote controls)"
+echo "- Wrong answer action: ......... H                ('<' on remote controls)"
 echo "- Right answer action + hide: .. SHIFT + L"
 echo "- Wrong answer action + hide: .. SHIFT + H"
 echo ""

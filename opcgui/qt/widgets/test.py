@@ -357,6 +357,15 @@ class TestWidget(QWidget):
         answer_action.triggered.connect(self.answer_btn_callback)
         self.addAction(answer_action)
 
+        # Answer action (alternative shortcut for remote controls)
+
+        alt_answer_action = QAction(self)
+        alt_answer_action.setShortcut(Qt.SHIFT | Qt.Key_F5)
+        alt_answer_action.setShortcutContext(Qt.WindowShortcut)
+
+        alt_answer_action.triggered.connect(self.answer_btn_callback)
+        self.addAction(alt_answer_action)
+
         # Skip card action
 
         skip_card_action = QAction(self)
@@ -366,10 +375,19 @@ class TestWidget(QWidget):
         skip_card_action.triggered.connect(self.skip_card_btn_callback)
         self.addAction(skip_card_action)
 
+        # Skip card action (alternative shortcut for remote controls)
+
+        alt_skip_card_action = QAction(self)
+        alt_skip_card_action.setShortcut(Qt.Key_Escape)
+        alt_skip_card_action.setShortcutContext(Qt.WindowShortcut)
+
+        alt_skip_card_action.triggered.connect(self.skip_card_btn_callback)
+        self.addAction(alt_skip_card_action)
+
         # Skip level action
 
         skip_level_action = QAction(self)
-        skip_level_action.setShortcut(Qt.Key_PageUp)
+        skip_level_action.setShortcut(Qt.CTRL | Qt.Key_PageUp)
         skip_level_action.setShortcutContext(Qt.WindowShortcut)
 
         skip_level_action.triggered.connect(self.skip_level_callback)
@@ -392,6 +410,14 @@ class TestWidget(QWidget):
         right_answer_action.triggered.connect(self.right_answer_btn_callback)
         self.addAction(right_answer_action)
 
+        # Right answer action (alternative shortcut for remote controls)
+
+        alt_right_answer_action = QAction(self)
+        alt_right_answer_action.setShortcut(Qt.Key_PageDown)
+
+        alt_right_answer_action.triggered.connect(self.right_answer_btn_callback)
+        self.addAction(alt_right_answer_action)
+
         # Wrong answer action
 
         wrong_answer_action = QAction(self)
@@ -399,6 +425,14 @@ class TestWidget(QWidget):
 
         wrong_answer_action.triggered.connect(self.wrong_answer_btn_callback)
         self.addAction(wrong_answer_action)
+
+        # Wrong answer action (alternative shortcut for remote controls)
+
+        alt_wrong_answer_action = QAction(self)
+        alt_wrong_answer_action.setShortcut(Qt.Key_PageUp)
+
+        alt_wrong_answer_action.triggered.connect(self.wrong_answer_btn_callback)
+        self.addAction(alt_wrong_answer_action)
 
         # Right answer action + hide
 
