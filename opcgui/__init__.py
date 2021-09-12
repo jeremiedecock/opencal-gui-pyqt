@@ -38,4 +38,25 @@ def get_version():
 
 APPLICATION_NAME = "OpenCAL"
 
-__all__ = ['TODO']
+__all__ = ['config']
+
+
+# CONFIGURATION ###############################################################
+
+from collections import namedtuple
+import os
+import yaml
+
+config = None       # The instance that contains the loaded configuration
+
+def load_config_file(file_path="~/.opencal.yaml"):
+    global config
+
+    file_path = os.path.expanduser(file_path)  # to handle "~/..." paths
+    file_path = os.path.abspath(file_path)     # to handle relative paths
+
+    with open(file_path) as stream:
+        config_dict = yaml.safe_load(stream)
+
+        Config = namedtuple('Config', config_dict.keys())
+        config = Config(**config_dict)

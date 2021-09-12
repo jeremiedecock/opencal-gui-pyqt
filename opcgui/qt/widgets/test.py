@@ -19,6 +19,10 @@ from PyQt5.QtWidgets import QTableView, QWidget, QPushButton, QVBoxLayout, QAbst
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 from PyQt5.QtWidgets import QApplication, QSizePolicy
 
+import opcgui
+
+# TODO: USE THE JINJA TEMPLATE ENGINE HERE !
+
 HTML_RIGHT_FEEDBACK = '''<!DOCTYPE html>
 <html>
     <head>
@@ -80,127 +84,134 @@ MATHJAX = r'''<script type="text/x-mathjax-config">
     </script>
 '''
 
-CSS = r'''
-/* Copyright (c) 2006,2007,2008,2009,2010,2011 Jérémie DECOCK (jdhp.org)     */
+def get_css():
+    font_size_str = str(opcgui.config.font_size)
 
-/* ************************************************************************* */
-/*                                 DEFAULT                                   */
-/* ************************************************************************* */
+    css = r'''
+    /* Copyright (c) 2006,2007,2008,2009,2010,2011 Jérémie DECOCK (jdhp.org)     */
 
-* {
-    border-width      : 0px;
+    /* ************************************************************************* */
+    /*                                 DEFAULT                                   */
+    /* ************************************************************************* */
 
-    font-family       : monospace,fixed;
-    font-size         : 14px;
+    * {
+        border-width      : 0px;
 
-    margin            : 0px;
-    padding           : 0px;
-}
+        font-family       : monospace,fixed;
+        font-size         : 14px;
 
-div#empty {
-    position          : absolute;
-    text-align        : center;
-    top               : 50%;
-    width             : 100%;
-}
+        margin            : 0px;
+        padding           : 0px;
+    }
 
-/* ************************************************************************* */
-/*                                 HEADER                                    */
-/* ************************************************************************* */
+    div#empty {
+        position          : absolute;
+        text-align        : center;
+        top               : 50%;
+        width             : 100%;
+    }
 
-div#informations {
-    background-color  : #eeeeee;
-    border-bottom     : 1px solid #dddddd;
-    color             : #666666;
+    /* ************************************************************************* */
+    /*                                 HEADER                                    */
+    /* ************************************************************************* */
 
-    font-size         : 11px;
+    div#informations {
+        background-color  : #eeeeee;
+        border-bottom     : 1px solid #dddddd;
+        color             : #666666;
 
-    padding           : 1em;
-}
+        font-size         : 11px;
 
-div#informations span {
-    font-size         : 11px;
-}
+        padding           : 1em;
+    }
 
-/*
-div#informations span.information {
-    margin-right      : 3em;
-}
-*/
+    div#informations span {
+        font-size         : 11px;
+    }
 
-div#informations span.highlight {
-    color             : #197cc1;
-}
+    /*
+    div#informations span.information {
+        margin-right      : 3em;
+    }
+    */
 
-div#informations span.star {
-    /* Image : 22x22 px */
-    background-image  : url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAYAAADEtGw7AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAN1wAADdcBQiibeAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAOPSURBVDiNtZXPb1RVFMe/33vfe515b6aOtGMZC3SKaVRgIdFo4s6wdE38F9y4I27c+QcQw19hYKcmxqWJERckCJrG2BiMUto6nU6B6eu8H/d8XYClaCuo8exucu7nnu8595xDSfg/zD2t45Ur9AD5tP48PGK60ejVdhxb4r0lrirTkmIURbvNZp0PBr7odr8f/0Pwa+nubnXEzI548VmT2qSmADnI1fKcMNi9IoTVTidbBa5VTwCT4/HZ2dgmncr5eQ8dFTAjaZpEA6AHVEvMSWxTHCByd3Z2iuXZ2R/u7wdH+w/b26884309E6Jo0ZkdFzQPsAuqE0Vv9+nacVV+/KsDxwZsAfabTO1GI2kAS98AK8UB4DNJoxF3QtAJmBYpLRp1DFDPsTsXT32wRMas66+6sttbBAYAOhSmIHN5nt5PU14HHqRgD5znNsMQeoDN0+mEoD7BRUDH4+Td58gOACBJ3j9RTN7rAVgHmUIkiZpm+c7O6TtZhvV94LciX/k0OOsCOCpzPfp4weGlJRe92Yrid/Z0+egck6kPXag/PxbCt54sKoE7gEbO+T6wD7yxsTXVbtu0xI6zeCZpfnTO+TeeJ5sH/Fsiis9HUXwewGQ+1F+3y/LClqxcZ209gA6QOQCYm1PCwJRiJlaZ2Up9MPTP1oD0M2VFi0TLHLLB4HQKPOy88ZhxIGMSCYikKi9t1vUXT+x1C9etLC5WhKZMSGAWNxpVYw/cql352A0FlZMLtdlPdhhUGoWyvFgDAQAFQACQ543dPfDari+9UEooIBYgJkCdy1YPjVY2hGzNA8glTRytgFjMzd18BO71ThbmlIsYk3YPxDaAIZkenmfGTlo1gFsi7koYy2ENkO2BgcshA9cYMDLzQ4ADwK0BSf1AdoEQrtYhXK2AycPcG0GsAlgnOAD80Hu/8se7jzovmx0iH65DOgJxWrCm6eZCXXyahfqzVCpiIAFJ+OjcxLlTE8rdEnFbxjsil1vNG7f3BD0+hM60xmO87oQXQPUhHgPtKIAZQpkBnkAJ8D6ITQhrAH4h/I8bm+NP+v1bk0PAAHC2MxlXZ4PUJ9AT2SXVkdQk5AXWhBuTGBm0QXIlTRtfAtfuPlaCg+bx8vKZZGEBLzvjSUEzdJiWqQHKSa52jrsGbaPCjaxz6jvgcvhLbf9mg3Bz88VWlsUdla7rI5utYYF1NCpVDavKDf/FBvnv9jtEyeUld60tXQAAAABJRU5ErkJggg==);
-    background-repeat : no-repeat;
-}
+    div#informations span.highlight {
+        color             : #197cc1;
+    }
 
-/* ************************************************************************* */
-/*                                  TAGS                                     */
-/* ************************************************************************* */
+    div#informations span.star {
+        /* Image : 22x22 px */
+        background-image  : url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAYAAADEtGw7AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAN1wAADdcBQiibeAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAOPSURBVDiNtZXPb1RVFMe/33vfe515b6aOtGMZC3SKaVRgIdFo4s6wdE38F9y4I27c+QcQw19hYKcmxqWJERckCJrG2BiMUto6nU6B6eu8H/d8XYClaCuo8exucu7nnu8595xDSfg/zD2t45Ur9AD5tP48PGK60ejVdhxb4r0lrirTkmIURbvNZp0PBr7odr8f/0Pwa+nubnXEzI548VmT2qSmADnI1fKcMNi9IoTVTidbBa5VTwCT4/HZ2dgmncr5eQ8dFTAjaZpEA6AHVEvMSWxTHCByd3Z2iuXZ2R/u7wdH+w/b26884309E6Jo0ZkdFzQPsAuqE0Vv9+nacVV+/KsDxwZsAfabTO1GI2kAS98AK8UB4DNJoxF3QtAJmBYpLRp1DFDPsTsXT32wRMas66+6sttbBAYAOhSmIHN5nt5PU14HHqRgD5znNsMQeoDN0+mEoD7BRUDH4+Td58gOACBJ3j9RTN7rAVgHmUIkiZpm+c7O6TtZhvV94LciX/k0OOsCOCpzPfp4weGlJRe92Yrid/Z0+egck6kPXag/PxbCt54sKoE7gEbO+T6wD7yxsTXVbtu0xI6zeCZpfnTO+TeeJ5sH/Fsiis9HUXwewGQ+1F+3y/LClqxcZ209gA6QOQCYm1PCwJRiJlaZ2Up9MPTP1oD0M2VFi0TLHLLB4HQKPOy88ZhxIGMSCYikKi9t1vUXT+x1C9etLC5WhKZMSGAWNxpVYw/cql352A0FlZMLtdlPdhhUGoWyvFgDAQAFQACQ543dPfDari+9UEooIBYgJkCdy1YPjVY2hGzNA8glTRytgFjMzd18BO71ThbmlIsYk3YPxDaAIZkenmfGTlo1gFsi7koYy2ENkO2BgcshA9cYMDLzQ4ADwK0BSf1AdoEQrtYhXK2AycPcG0GsAlgnOAD80Hu/8se7jzovmx0iH65DOgJxWrCm6eZCXXyahfqzVCpiIAFJ+OjcxLlTE8rdEnFbxjsil1vNG7f3BD0+hM60xmO87oQXQPUhHgPtKIAZQpkBnkAJ8D6ITQhrAH4h/I8bm+NP+v1bk0PAAHC2MxlXZ4PUJ9AT2SXVkdQk5AXWhBuTGBm0QXIlTRtfAtfuPlaCg+bx8vKZZGEBLzvjSUEzdJiWqQHKSa52jrsGbaPCjaxz6jvgcvhLbf9mg3Bz88VWlsUdla7rI5utYYF1NCpVDavKDf/FBvnv9jtEyeUld60tXQAAAABJRU5ErkJggg==);
+        background-repeat : no-repeat;
+    }
 
-div#tags {
-    margin            : 0.5em 2em 2em 2em;
-}
+    /* ************************************************************************* */
+    /*                                  TAGS                                     */
+    /* ************************************************************************* */
 
-div#tags span.tag {
-    /* Image : 15x15 px */
-    background-image  : url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPCAYAAAA71pVKAAAAAXNSR0IArs4c6QAAAAZiS0dEAAAAAAAA+UO7fwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9sGDAsgIaQD10kAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAABjklEQVQoz32Sv2vbQBzFn1wKwRAIIiDs7cCLMGS5bv4P/B9kyN6lZO2SsUu2QCF7lyxez5u0aZOWgE+Lq6PQwB0Jwo6JI+jwMrS+GFvug5uO7+e9749Aa30L4DMArNdrbEtKGeB/0lqzTdZa5nlOkjj0OhuIMQZFUcAYAwCIoghhGKIoCh4y7myi1nUNKWVQ17X/FEIgDENkWdYK8M7bLs/rZzjnUJRPEEKg3++3A/715bV8WdJayy/XGS+uEub6kSRZVRWTJOFez845D3tdveLbj58AgJPjI9zc3fsEQgikaeoTdKSUwXw+94Df9QcsVo2H7QJ6vZ4HBORfUJZlHAwGiKIIRfmEm7t7nBwfechi1eDy/AwyPkVZljDGvA9sNBoFs9kMzjnI+BSX52etCbblnTdK05TD4XAvwWLV4PvXT3j49QBjDMbjcdB6OUopWmtJkrl+5MVVwuXLklprKqX8xA+enlKKVVX5Fe4WktyPva3pdMo4jtE0zXvUnZ4/AvhzCDCZTNjtdvcKAeANfNtm4C6e18cAAAAASUVORK5CYII=);
-    background-repeat : no-repeat;
+    div#tags {
+        margin            : 0.5em 2em 2em 2em;
+    }
 
-    color             : #666666;
-    font-size         : 10px;
-    
-    margin-right      : 0.5em;
+    div#tags span.tag {
+        /* Image : 15x15 px */
+        background-image  : url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPCAYAAAA71pVKAAAAAXNSR0IArs4c6QAAAAZiS0dEAAAAAAAA+UO7fwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9sGDAsgIaQD10kAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAABjklEQVQoz32Sv2vbQBzFn1wKwRAIIiDs7cCLMGS5bv4P/B9kyN6lZO2SsUu2QCF7lyxez5u0aZOWgE+Lq6PQwB0Jwo6JI+jwMrS+GFvug5uO7+e9749Aa30L4DMArNdrbEtKGeB/0lqzTdZa5nlOkjj0OhuIMQZFUcAYAwCIoghhGKIoCh4y7myi1nUNKWVQ17X/FEIgDENkWdYK8M7bLs/rZzjnUJRPEEKg3++3A/715bV8WdJayy/XGS+uEub6kSRZVRWTJOFez845D3tdveLbj58AgJPjI9zc3fsEQgikaeoTdKSUwXw+94Df9QcsVo2H7QJ6vZ4HBORfUJZlHAwGiKIIRfmEm7t7nBwfechi1eDy/AwyPkVZljDGvA9sNBoFs9kMzjnI+BSX52etCbblnTdK05TD4XAvwWLV4PvXT3j49QBjDMbjcdB6OUopWmtJkrl+5MVVwuXLklprKqX8xA+enlKKVVX5Fe4WktyPva3pdMo4jtE0zXvUnZ4/AvhzCDCZTNjtdvcKAeANfNtm4C6e18cAAAAASUVORK5CYII=);
+        background-repeat : no-repeat;
 
-    padding-left      : 18px;
-    padding-top       : 1px;
-    padding-bottom    : 1px;
-}
+        color             : #666666;
+        font-size         : 10px;
+        
+        margin-right      : 0.5em;
 
-/* ************************************************************************* */
-/*                          QUESTION AND ANSWER                              */
-/* ************************************************************************* */
+        padding-left      : 18px;
+        padding-top       : 1px;
+        padding-bottom    : 1px;
+    }
 
-h1 {
-    font-size         : 14px;
-    font-family       : verdana, sans-serif;
+    /* ************************************************************************* */
+    /*                          QUESTION AND ANSWER                              */
+    /* ************************************************************************* */
 
-    margin            : 0em 1em 0.5em 1em;
-}
+    h1 {
+        font-size         : 14px;
+        font-family       : verdana, sans-serif;
 
-h1.question {
+        margin            : 0em 1em 0.5em 1em;
+    }
 
-}
+    h1.question {
 
-h1.answer {
-    border-top        : 1px solid #dddddd;
+    }
 
-    margin-top        : 1em;
-    padding-top       : 1em;
-}
+    h1.answer {
+        border-top        : 1px solid #dddddd;
 
-div.question {
-    margin            : 0em 2em 0.5em 2em;
-    white-space       : pre-wrap;
-}
+        margin-top        : 1em;
+        padding-top       : 1em;
+    }
 
-div.question img {
-    max-width         : 100%;
-}
+    div.question {
+        font-size         : ''' + font_size_str + r'''px;
+        margin            : 0em 2em 0.5em 2em;
+        white-space       : pre-wrap;
+    }
 
-div.answer {
-    margin            : 0em 2em 0.5em 2em;
-    white-space       : pre-wrap;
-}
+    div.question img {
+        max-width         : 100%;
+    }
 
-div.answer img {
-    max-width         : 100%;
-}
-'''
+    div.answer {
+        font-size         : ''' + font_size_str + r'''px;
+        margin            : 0em 2em 0.5em 2em;
+        white-space       : pre-wrap;
+    }
+
+    div.answer img {
+        max-width         : 100%;
+    }
+    '''
+
+    return css
 
 INFORMATION = '''<div id="informations">
     <span class="information">
@@ -521,7 +532,7 @@ class TestWidget(QWidget):
         else:
             html_body = r'<div id="empty">Empty selection</div>'
 
-        html = HTML.format(CSS, MATHJAX, html_body)
+        html = HTML.format(get_css(), MATHJAX, html_body)
 
         #with open("/tmp/opcgui_card_debug.html", "w") as fd:
         #    print(html, file=fd)

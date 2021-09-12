@@ -5,6 +5,7 @@ from opencal.core.professor.ltm.alice import ProfessorAlice
 from opencal.core.professor.ltm.berenice import ProfessorBerenice
 from opencal.core.professor.ltm.celia import ProfessorCelia
 
+import opcgui
 from opcgui.qt.widgets.tabs.test import TestTab
 from opcgui.qt.widgets.tabs.add import AddCardsTab
 from opcgui.qt.widgets.tabs.forwardtest import ForwardTestTab
@@ -20,11 +21,10 @@ from PyQt5.QtWidgets import QMainWindow, QTabWidget
 
 class MainWindow(QMainWindow):
 
-    def __init__(self, card_list, app_config):
+    def __init__(self, card_list):
         super().__init__()
 
         self.card_list = card_list
-        self.app_config = app_config
 
         self.context_directory = tempfile.TemporaryDirectory()  # Make a temporary directory to store external files (JS, medias, ...)
 
@@ -34,16 +34,16 @@ class MainWindow(QMainWindow):
 
         # Set Professor ###################################
 
-        if self.app_config["ltm_professor"] == "alice":
+        if opcgui.config.ltm_professor == "alice":
             self.professor = ProfessorAlice(self.card_list)
-        elif self.app_config["ltm_professor"] == "berenice":
-            berenice_config = {key: value for key, value in self.app_config.items() if key in ("max_cards_per_grade", "tag_priority_dict", "tag_difficulty_dict", "reverse_level_0")}
+        elif opcgui.config.ltm_professor == "berenice":
+            berenice_config = {key: value for key, value in opcgui.config._asdict().items() if key in ("max_cards_per_grade", "tag_priority_dict", "tag_difficulty_dict", "reverse_level_0")}
             self.professor = ProfessorBerenice(self.card_list, **berenice_config)
-        elif self.app_config["ltm_professor"] == "celia":
-            celia_config = {key: value for key, value in self.app_config.items() if key in ("max_cards_per_grade", "tag_priority_dict", "tag_difficulty_dict", "reverse_level_0")}
+        elif opcgui.config.ltm_professor == "celia":
+            celia_config = {key: value for key, value in opcgui.config._asdict().items() if key in ("max_cards_per_grade", "tag_priority_dict", "tag_difficulty_dict", "reverse_level_0")}
             self.professor = ProfessorCelia(self.card_list, **celia_config)
         else:
-            raise ValueError('Unknown professor "{}"'.format(self.app_config["professor"]))
+            raise ValueError('Unknown professor "{}"'.format(opcgui.config.professor))
 
         # Make widgets ####################################
 
@@ -72,13 +72,13 @@ class MainWindow(QMainWindow):
         # Mathjax
 
         # Install MathJax on Debian: "aptitude install libjs-mathjax"
-        mathjax_src_path = self.app_config['mathjax_path']
+        mathjax_src_path = opcgui.config.mathjax_path
         mathjax_dst_path = os.path.join(self.context_directory.name, "mathjax")
         os.symlink(mathjax_src_path, mathjax_dst_path)
 
         # Cards media (images, audio and video files)
 
-        medias_src_path = os.path.expanduser(self.app_config['pkb_medias_path'])
+        medias_src_path = os.path.expanduser(opcgui.config.pkb_medias_path)
         medias_dst_path = os.path.join(self.context_directory.name, "materials")
         os.symlink(medias_src_path, medias_dst_path)
 
