@@ -43,9 +43,23 @@ __all__ = ['config']
 
 # CONFIGURATION ###############################################################
 
-from collections import namedtuple
+from dataclasses import dataclass
 import os
 import yaml
+
+# Dataclass: c.f. https://docs.python.org/3/library/dataclasses.html and https://stackoverflow.com/questions/31252939/changing-values-of-a-list-of-namedtuples/31253184
+@dataclass
+class Config:
+    pkb_path: str
+    pkb_medias_path: str
+    mathjax_path: str
+    font_size: int
+    ltm_professor: str
+    stm_professor: str
+    max_cards_per_grade: int
+    tag_priority_dict: dict
+    tag_difficulty_dict: dict
+    reverse_level_0: bool
 
 config = None       # The instance that contains the loaded configuration
 
@@ -57,6 +71,4 @@ def load_config_file(file_path="~/.opencal.yaml"):
 
     with open(file_path) as stream:
         config_dict = yaml.safe_load(stream)
-
-        Config = namedtuple('Config', config_dict.keys())
         config = Config(**config_dict)

@@ -17,7 +17,7 @@ from opcgui import APPLICATION_NAME
 import os
 import tempfile
 
-from PyQt5.QtWidgets import QMainWindow, QTabWidget
+from PyQt5.QtWidgets import QMainWindow, QTabWidget, QAction
 
 class MainWindow(QMainWindow):
 
@@ -37,10 +37,10 @@ class MainWindow(QMainWindow):
         if opcgui.config.ltm_professor == "alice":
             self.professor = ProfessorAlice(self.card_list)
         elif opcgui.config.ltm_professor == "berenice":
-            berenice_config = {key: value for key, value in opcgui.config._asdict().items() if key in ("max_cards_per_grade", "tag_priority_dict", "tag_difficulty_dict", "reverse_level_0")}
+            berenice_config = {key: value for key, value in opcgui.config.__dict__.items() if key in ("max_cards_per_grade", "tag_priority_dict", "tag_difficulty_dict", "reverse_level_0")}
             self.professor = ProfessorBerenice(self.card_list, **berenice_config)
         elif opcgui.config.ltm_professor == "celia":
-            celia_config = {key: value for key, value in opcgui.config._asdict().items() if key in ("max_cards_per_grade", "tag_priority_dict", "tag_difficulty_dict", "reverse_level_0")}
+            celia_config = {key: value for key, value in opcgui.config.__dict__.items() if key in ("max_cards_per_grade", "tag_priority_dict", "tag_difficulty_dict", "reverse_level_0")}
             self.professor = ProfessorCelia(self.card_list, **celia_config)
         else:
             raise ValueError('Unknown professor "{}"'.format(opcgui.config.professor))
@@ -82,6 +82,48 @@ class MainWindow(QMainWindow):
         medias_dst_path = os.path.join(self.context_directory.name, "materials")
         os.symlink(medias_src_path, medias_dst_path)
 
+        # Set the menu bar ################################
+
+        # Make the Action object
+        font_small_action = QAction('Font &Small', self)
+        #font_small_action.setShortcut('Ctrl+z+1')
+        font_small_action.setStatusTip("Font small")
+        font_small_action.triggered.connect(self.font_small_calback)
+
+        font_normal_action = QAction('Font &Normal', self)
+        #font_normal_action.setShortcut('Ctrl+z+2')
+        font_normal_action.setStatusTip("Font normal")
+        font_normal_action.triggered.connect(self.font_normal_calback)
+
+        font_large_action = QAction('Font &Large', self)
+        #font_large_action.setShortcut('Ctrl+z+3')
+        font_large_action.setStatusTip("Font large")
+        font_large_action.triggered.connect(self.font_large_calback)
+
+        menu = self.menuBar()
+        config_menu = menu.addMenu("&Configuration")
+        config_menu.addAction(font_small_action)
+        config_menu.addAction(font_normal_action)
+        config_menu.addAction(font_large_action)
+
         # Show ############################################
 
         self.show()
+
+    def set_webview_font_size(self, font_size):
+        opcgui.config.font_size = font_size
+
+        for test_widget in (self.daily_test_tab, self.forward_test_tab.test_widget, self.review_tab.test_widget):
+            if test_widget.stack_layout.currentWidget() == test_widget.navigation_widget:
+                test_widget.update_html(show_answer=False)
+            if test_widget.stack_layout.currentWidget() == test_widget.answer_widget:
+                test_widget.update_html(show_answer=True)
+
+    def font_small_calback(self):
+        self.set_webview_font_size(font_size=8)
+
+    def font_normal_calback(self):
+        self.set_webview_font_size(font_size=14)
+
+    def font_large_calback(self):
+        self.set_webview_font_size(font_size=32)
