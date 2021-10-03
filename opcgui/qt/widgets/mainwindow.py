@@ -110,8 +110,8 @@ class MainWindow(QMainWindow):
 
         self.show()
 
-    def set_webview_font_size(self, font_size):
-        opcgui.config.font_size = font_size
+    def set_webview_html_scale(self, html_scale):
+        opcgui.config.html_scale = html_scale
 
         for test_widget in (self.daily_test_tab, self.forward_test_tab.test_widget, self.review_tab.test_widget):
             if test_widget.stack_layout.currentWidget() == test_widget.navigation_widget:
@@ -120,10 +120,10 @@ class MainWindow(QMainWindow):
                 test_widget.update_html(show_answer=True)
 
     def font_small_calback(self):
-        self.set_webview_font_size(font_size=8)
+        self.set_webview_html_scale(html_scale=0.6)
 
     def font_normal_calback(self):
-        self.set_webview_font_size(font_size=14)
+        self.set_webview_html_scale(html_scale=1.0)
 
     def font_large_calback(self):
-        self.set_webview_font_size(font_size=32)
+        self.set_webview_html_scale(html_scale=2.5)

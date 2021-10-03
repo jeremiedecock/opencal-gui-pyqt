@@ -53,7 +53,7 @@ class Config:
     pkb_path: str
     pkb_medias_path: str
     mathjax_path: str
-    font_size: int
+    html_scale: float
     ltm_professor: str
     stm_professor: str
     max_cards_per_grade: int

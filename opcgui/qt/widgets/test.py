@@ -9,6 +9,7 @@ import datetime
 import os
 import re
 import time
+import math
 
 from opencal.core.data import RIGHT_ANSWER_STR, WRONG_ANSWER_STR
 from opcgui.utils import datetime_to_date
@@ -55,7 +56,18 @@ MATHJAX = r'''<script type="text/x-mathjax-config">
 '''
 
 def get_css():
-    font_size_str = str(opcgui.config.font_size)
+    html_scale = opcgui.config.html_scale
+    scale_str = "{:.1f}".format(html_scale)
+
+    #if html_scale > 1:
+    #    width_str = "width: {:d}%;".format(math.ceil(1./html_scale * 100.))
+    #else:
+    #    width_str = ""
+
+    # To avoid horizontal scrolling due to the "scale" CSS property
+    # (without this correction of the "body.width" property, the card's text stick out the window
+    # and a horizontal scroll bar appears).
+    width_str = "{:d}".format(math.floor(1./html_scale * 100.))
 
     css = r'''
     /* Copyright (c) 2006,2007,2008,2009,2010,2011 Jérémie DECOCK (jdhp.org)     */
@@ -161,7 +173,6 @@ def get_css():
     }
 
     div.question {
-        font-size         : ''' + font_size_str + r'''px;
         margin            : 0em 2em 0.5em 2em;
         white-space       : pre-wrap;
     }
@@ -171,13 +182,18 @@ def get_css():
     }
 
     div.answer {
-        font-size         : ''' + font_size_str + r'''px;
         margin            : 0em 2em 0.5em 2em;
         white-space       : pre-wrap;
     }
 
     div.answer img {
         max-width         : 100%;
+    }
+
+    body {
+        transform         : scale(''' + scale_str + r''');
+        transform-origin  : 0 0;
+        width             : ''' + width_str + r'''%;
     }
     '''
 
