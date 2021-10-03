@@ -5,7 +5,10 @@ import datetime
 
 from opencal.core.professor.itm.ralph import ProfessorRalph
 from opencal.core.professor.itm.randy import ProfessorRandy
+from opencal.core.professor.itm.arthur import ProfessorArthur
 from opencal.core.data import RIGHT_ANSWER_STR, WRONG_ANSWER_STR
+
+import opcgui
 
 from opcgui.qt.widgets.test import TestWidget
 
@@ -27,8 +30,14 @@ class ReviewTab(QWidget):
         self.orig_card_list = card_list
         self.current_card_list = []
 
-        #self.professor = ProfessorRalph(self.current_card_list)
-        self.professor = ProfessorRandy(self.current_card_list)
+        if opcgui.config.stm_professor.lower() == "ralf":
+            self.professor = ProfessorRalph(self.current_card_list)
+        elif opcgui.config.stm_professor.lower() == "randy":
+            self.professor = ProfessorRandy(self.current_card_list)
+        elif opcgui.config.stm_professor.lower() == "arthur":
+            self.professor = ProfessorArthur(self.current_card_list, opcgui.config.active_list_increment_size)
+        else:
+            raise ValueError("Unknown STM professor", opcgui.config.stm_professor)
 
         # Make widgets ####################################
 

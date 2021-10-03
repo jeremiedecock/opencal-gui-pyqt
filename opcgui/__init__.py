@@ -56,6 +56,7 @@ class Config:
     html_scale: float
     ltm_professor: str
     stm_professor: str
+    active_list_increment_size: int
     max_cards_per_grade: int
     tag_priority_dict: dict
     tag_difficulty_dict: dict
