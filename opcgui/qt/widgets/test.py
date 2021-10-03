@@ -23,57 +23,27 @@ import opcgui
 
 # TODO: USE THE JINJA TEMPLATE ENGINE HERE !
 
-HTML_RIGHT_FEEDBACK = '''<!DOCTYPE html>
-<html>
-    <head>
-            <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-            <style type="text/css" media="all">
-* {
-    border-width      : 0px;
-    margin            : 0px;
-    padding           : 0px;
-    background-color  : #00ff00;
-}
-            </style>
-    </head>
-    <body>
-    </body>
-</html>
-'''
-
-HTML_WRONG_FEEDBACK = '''<!DOCTYPE html>
-<html>
-    <head>
-            <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-            <style type="text/css" media="all">
-* {
-    border-width      : 0px;
-    margin            : 0px;
-    padding           : 0px;
-    background-color  : #ff0000;
-}
-            </style>
-    </head>
-    <body>
-    </body>
-</html>
-'''
-
 HTML = '''<!DOCTYPE html>
 <html>
-<head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <style type="text/css" media="all">
-    {}
-    </style>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <style type="text/css" media="all">
+        {}
+        </style>
 
-    {}
+        {}
 
-    <script type="text/javascript" src="mathjax/MathJax.js?config=TeX-AMS_HTML-full"></script>
-</head>
-<body>
-    {}
-</body>
+        <script type="text/javascript" src="mathjax/MathJax.js?config=TeX-AMS_HTML-full"></script>
+
+        <script>
+            function init() {{
+                document.body.style.backgroundColor = "#fff";
+            }}
+        </script>
+    </head>
+    <body onload="init()">
+        {}
+    </body>
 </html>
 '''
 
@@ -476,13 +446,6 @@ class TestWidget(QWidget):
 
 
     def update_html(self, show_answer=False, feedback=None):
-        #if feedback == "right":
-        #    self.web_view.setHtml(HTML_RIGHT_FEEDBACK)
-        #    time.sleep(.5)
-        #elif feedback == "wrong":
-        #    self.web_view.setHtml(HTML_WRONG_FEEDBACK)
-        #    time.sleep(.5)
-
         current_card = self.professor.current_card
 
         if current_card is not None:
@@ -532,7 +495,28 @@ class TestWidget(QWidget):
         else:
             html_body = r'<div id="empty">Empty selection</div>'
 
-        html = HTML.format(get_css(), MATHJAX, html_body)
+        # CSS
+
+        css_str = get_css()
+
+        if feedback == "right":
+            css_str += r"""
+            body {
+                background-color  : #B9E0A5;
+                transition: background-color 1s ease-out; 
+            }
+            """
+        elif feedback == "wrong":
+            css_str += r"""
+            body {
+                background-color  : #F19C99;
+                transition: background-color 1s ease-out; 
+            }
+            """
+        
+        #print(css_str)
+
+        html = HTML.format(css_str, MATHJAX, html_body)
 
         #with open("/tmp/opcgui_card_debug.html", "w") as fd:
         #    print(html, file=fd)
