@@ -11,6 +11,8 @@ from PyQt5.QtWidgets import QWidget, QComboBox, QLabel, QVBoxLayout, QLineEdit, 
 
 import datetime
 
+REMAINING_CARDS_LABEL = "Reviewed or skipped cards: {}     Remaining: {} / {}"
+
 class ForwardTestTab(QWidget):
 
     def __init__(self, card_list, context_directory, main_window, parent=None):
@@ -18,14 +20,16 @@ class ForwardTestTab(QWidget):
 
         self.orig_card_list = card_list
         self.current_card_list = []
+        self.num_total_cards = 0
 
         self.tags = [""] + tag_list(self.orig_card_list, sort="asc")
 
         self.professor = ProfessorBrutus(self.current_card_list)
+        self.professor.add_reply_observer(self)
 
         # Make widgets ####################################
 
-        self.num_remaining_cards_label = QLabel("Selected cards: 0")
+        self.num_remaining_cards_label = QLabel(REMAINING_CARDS_LABEL.format(0, 0, 0))
 
         self.line_edit_contains_filter = QLineEdit()
         self.line_edit_contains_filter.setPlaceholderText("Filter pattern (on question and answer)")
@@ -88,9 +92,19 @@ class ForwardTestTab(QWidget):
         self.current_card_list = [card for card in self.orig_card_list if review_card(card, selected_tag, content_text, null_period)]
         self.professor.update_card_list(self.current_card_list)
 
-        self.num_remaining_cards_label.setText("Selected cards: {}".format(len(self.current_card_list)))
+        self.num_total_cards = len(self.current_card_list)
+
+        self.num_remaining_cards_label.setText(REMAINING_CARDS_LABEL.format(0, self.num_total_cards, self.num_total_cards))
 
         self.test_widget.update_html()
+
+
+    def answer_callback(self):
+        num_remaining_cards = self.professor.remaining_cards
+        num_total_cards = self.num_total_cards
+        num_reviewed_cards = num_total_cards - num_remaining_cards
+
+        self.num_remaining_cards_label.setText(REMAINING_CARDS_LABEL.format(num_reviewed_cards, num_remaining_cards, num_total_cards))
 
 
 def review_card(card, selected_tag, content_text, null_period, date_mock=None):
