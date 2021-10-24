@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from PyQt5.QtCore import Qt, QAbstractTableModel, QVariant, QSortFilterProxyModel
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPlainTextEdit, QTableView, QHeaderView
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPlainTextEdit, QTableView, QAbstractItemView
 
 import opencal.core.tags
 
@@ -83,6 +83,14 @@ class TagsTab(QWidget):
 
         self.table_view.setSortingEnabled(True)
         self.table_view.verticalHeader().hide()
+        #self.table_view.setSortingEnabled(True)
+
+        self.table_view.setSelectionBehavior(QAbstractItemView.SelectRows)    # Select the full row when a cell is selected (See http://doc.qt.io/qt-5/qabstractitemview.html#selectionBehavior-prop )
+        #self.table_view.setSelectionMode(QAbstractItemView.SingleSelection)  # Set selection mode. See http://doc.qt.io/qt-5/qabstractitemview.html#selectionMode-prop
+
+        self.table_view.setAlternatingRowColors(True)
+
+        self.table_view.verticalHeader().setVisible(False)              # Hide the vertical header
 
         # Set data (tags) ##############
 
