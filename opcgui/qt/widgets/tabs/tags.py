@@ -1,9 +1,58 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPlainTextEdit
+from PyQt5.QtCore import Qt, QAbstractTableModel, QVariant, QSortFilterProxyModel
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPlainTextEdit, QTableView, QHeaderView
 
 import opencal.core.tags
+
+
+# TODO:
+# - AJOUTER UN FILTRE SUR LE CONTENU DU TAG
+# - Implement dynamic updates of counts...
+# - AJOUTER UNE CHECKBOX "Count hidden cards" -> BOF... pas très utile + attention ça va générer des bugs car les cartes cachées n'ont pas de "grade" par défaut !
+
+class TagsTableModel(QAbstractTableModel):
+
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.tag_list = []
+
+    def rowCount(self, parent):
+        return len(self.tag_list)
+
+    def columnCount(self, parent):
+        if len(self.tag_list) == 0:
+            return 0
+        else:
+            return len(self.tag_list[0])
+
+    def data(self, index, role):
+        if role == Qt.DisplayRole:
+            if len(self.tag_list) > 0:
+                row = index.row()
+                column = index.column()
+                return self.tag_list[row][column]
+            else:
+                return ""
+
+        return QVariant()
+
+    def headerData(self, index, orientation, role):
+        num_columns = len(self.tag_list[0]) if len(self.tag_list) > 0 else 0
+
+        if role == Qt.DisplayRole:
+            if orientation == Qt.Horizontal:
+                if index == 0:
+                    return "Tag"
+                elif index == (num_columns - 1):
+                    return "Total"
+                elif index == (num_columns - 2):
+                    return "Level -1"
+                else:
+                    return "Level {}".format(index - 1)
+        return None
+
 
 class TagsTab(QWidget):
 
@@ -12,16 +61,70 @@ class TagsTab(QWidget):
 
         self.tabs = parent
 
-        self.edit = QPlainTextEdit()
+        self.ltm_card_list = card_list
 
-        tag_list = opencal.core.tags.tag_list_count(card_list, count_hidden_cards=False)
-        text = "\n".join(["{:6d}   {}".format(tag[1], tag[0]) for tag in tag_list])
+        max_grade = max([card["grade"] for card in card_list if "grade" in card])
 
-        self.edit.setPlainText(text)
-        self.edit.setReadOnly(True)
+        #self.edit = QPlainTextEdit()
+
+        #text = "\n".join(["{:6d}   {}".format(tag[1], tag[0]) for tag in tag_list])
+
+        #self.edit.setPlainText(text)
+        #self.edit.setReadOnly(True)
+
+        # Set widgets ##################
+
+        self.table_view = QTableView()
+        self.tags_table_model = TagsTableModel(None)
+
+        self.proxy_model = QSortFilterProxyModel()
+        self.proxy_model.setSourceModel(self.tags_table_model)
+        self.table_view.setModel(self.proxy_model)
+
+        self.table_view.setSortingEnabled(True)
+        self.table_view.verticalHeader().hide()
+
+        # Set data (tags) ##############
+
+        #self.tags_table_model.tag_list = opencal.core.tags.tag_list_count(self.ltm_card_list, count_hidden_cards=False)
+        count_hidden_cards = False
+        tag_dict = {}
+        for card in card_list:
+            if not card["hidden"] or count_hidden_cards:
+                grade = card["grade"] if "grade" in card else None   # Hidden cards don't have a grade by default (to speedup startup)
+                for tag in card["tags"]:
+
+                    if tag not in tag_dict:
+                        tag_dict[tag] = [0] * (max_grade + 2)
+
+                    if grade is not None:
+                        if grade == -1:
+                            tag_dict[tag][-2] += 1      # Grade -1 is on the penultimate column
+                        else:
+                            tag_dict[tag][grade] += 1
+
+                    tag_dict[tag][-1] += 1
+        
+        self.tags_table_model.tag_list = [[k] + v for k, v in tag_dict.items()]
+
+        # The following line are necessary e.g. to dynamically update the QSortFilterProxyModel
+        #self.createIndex(0, 0)
+        #self.createIndex(0, 1)
+        self.tags_table_model.layoutChanged.emit()
 
         # Set the layout ###############
 
         vbox = QVBoxLayout(self)
-        vbox.addWidget(self.edit)
+        vbox.addWidget(self.table_view)
         self.setLayout(vbox)
+
+        self.table_view.show()
+
+        # Misc ########################
+
+        self.table_view.sortByColumn(0, Qt.AscendingOrder)
+        #self.table_view.horizontalHeader().setStretchLastSection(True)
+        #self.table_view.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
+        #self.table_view.horizontalHeader().setSectionResizeMode(1, QHeaderView.Interactive)
+        #self.table_view.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.table_view.setColumnWidth(0, 300)
