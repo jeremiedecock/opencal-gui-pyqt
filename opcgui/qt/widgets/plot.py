@@ -24,18 +24,22 @@ RED = '#d62728'
 YELLOW = '#ff7f0e'
 GREEN = '#2ca02c'
 
+NUM_DAYS_PLOT = 365
+
 
 def plot_card_addition(df, ax):
     #tk1 = list(reversed(-np.arange(0, -df.wushift.min(), 30)))
     #tk2 = list(np.arange(0, df.wushift.max(), 30))
 
     try:
-        df.loc[df.cdate > datetime.datetime.now() - datetime.timedelta(days=30)].groupby("cdate").hidden.count().plot(x='cdate',
-                                                                                                                    y='hidden',
-                                                                                                                    kind='bar',
-                                                                                                                    color=BLUE,
-                                                                                                                    #yticks=tk1 + tk2,
-                                                                                                                    ax=ax)
+        series = df.groupby(df.cdate).size()
+        end_date = datetime.datetime.now()
+        start_date = end_date - datetime.timedelta(days=NUM_DAYS_PLOT)
+        #idx = pd.date_range(start_date, end_date)
+        #df = df.reindex(idx, fill_value=0)
+        series = series.asfreq('D')
+        series = series.fillna(0)
+        series.loc[series.index > start_date].plot(ax=ax)
     except TypeError as e:
         pass
 
@@ -64,12 +68,14 @@ def plot_card_review(df, ax):
     #tk1 = list(reversed(-np.arange(0, -df.wushift.min(), 30)))
     #tk2 = list(np.arange(0, df.wushift.max(), 30))
 
-    df.loc[df.rdate > datetime.datetime.now() - datetime.timedelta(days=30)].groupby("rdate").result.count().plot(x='rdate',
-                                                                                                                  y='result',
-                                                                                                                  kind='bar',
-                                                                                                                  color=BLUE,
-                                                                                                                  #yticks=tk1 + tk2,
-                                                                                                                  ax=ax)
+    series = df.groupby(df.rdate).size()
+    end_date = datetime.datetime.now()
+    start_date = end_date - datetime.timedelta(days=NUM_DAYS_PLOT)
+    #idx = pd.date_range(start_date, end_date)
+    #df = df.reindex(idx, fill_value=0)
+    series = series.asfreq('D')
+    series = series.fillna(0)
+    series.loc[series.index > start_date].plot(ax=ax)
 
     ax.grid(True, axis="y", linestyle=':', alpha=0.75)
 
@@ -88,9 +94,9 @@ class PlotCanvas(FigureCanvas):
     """
 
     def __init__(self, card_list, parent, width=5, height=4, dpi=100):
-        self.fig = Figure(figsize=(width, height), dpi=dpi)
-        nrows = 1
-        ncols = 2
+        self.fig = Figure(dpi=dpi)
+        nrows = 2
+        ncols = 1
         self.ax1 = self.fig.add_subplot(nrows, ncols, 1)
         self.ax2 = self.fig.add_subplot(nrows, ncols, 2)
 
@@ -117,6 +123,9 @@ class PlotCanvas(FigureCanvas):
 
         try:
             card_df, review_df = card_list_to_dataframes(self.card_list)
+
+            #card_df.to_csv("/tmp/card_df.csv")
+            #review_df.to_csv("/tmp/review_df.csv")
 
             #df['date_fmt'] = df['date'].dt.strftime('%a %d/%m')
             #df.loc[::2, 'date_fmt'] = ''
