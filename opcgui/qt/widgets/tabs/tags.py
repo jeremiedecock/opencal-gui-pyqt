@@ -1,14 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from PyQt5.QtCore import Qt, QAbstractTableModel, QVariant, QSortFilterProxyModel
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPlainTextEdit, QTableView, QAbstractItemView
+from PyQt5.QtCore import Qt, QAbstractTableModel, QVariant, QSortFilterProxyModel, QRegExp
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLineEdit, QTableView, QAbstractItemView
 
 import opencal.core.tags
 
-
 # TODO:
-# - AJOUTER UN FILTRE SUR LE CONTENU DU TAG
 # - Implement dynamic updates of counts...
 # - AJOUTER UNE CHECKBOX "Count hidden cards" -> BOF... pas très utile + attention ça va générer des bugs car les cartes cachées n'ont pas de "grade" par défaut !
 
@@ -74,11 +72,20 @@ class TagsTab(QWidget):
 
         # Set widgets ##################
 
+        # Line edit
+
+        self.tag_filter_line_edit = QLineEdit()
+        self.tag_filter_line_edit.setPlaceholderText("Tags filter")
+
+        # Table view
+
         self.table_view = QTableView()
         self.tags_table_model = TagsTableModel(None)
 
         self.proxy_model = QSortFilterProxyModel()
         self.proxy_model.setSourceModel(self.tags_table_model)
+        self.proxy_model.setFilterKeyColumn(0)
+
         self.table_view.setModel(self.proxy_model)
 
         self.table_view.setSortingEnabled(True)
@@ -123,6 +130,7 @@ class TagsTab(QWidget):
         # Set the layout ###############
 
         vbox = QVBoxLayout(self)
+        vbox.addWidget(self.tag_filter_line_edit)
         vbox.addWidget(self.table_view)
         self.setLayout(vbox)
 
@@ -136,3 +144,12 @@ class TagsTab(QWidget):
         #self.table_view.horizontalHeader().setSectionResizeMode(1, QHeaderView.Interactive)
         #self.table_view.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.table_view.setColumnWidth(0, 300)
+
+        # Set LineEdit slot #########################
+
+        self.tag_filter_line_edit.textChanged.connect(self.tag_filter_callback)
+
+
+    def tag_filter_callback(self):
+        filter_str = self.tag_filter_line_edit.text()
+        self.proxy_model.setFilterRegExp(QRegExp(filter_str, Qt.CaseInsensitive, QRegExp.FixedString))
