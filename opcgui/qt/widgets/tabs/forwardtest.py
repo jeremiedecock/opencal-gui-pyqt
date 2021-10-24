@@ -18,11 +18,13 @@ class ForwardTestTab(QWidget):
     def __init__(self, card_list, context_directory, main_window, parent=None):
         super().__init__(parent=parent)
 
-        self.orig_card_list = card_list
+        max_grade = max([card["grade"] for card in card_list if "grade" in card])
+
+        self.ltm_card_list = card_list
         self.current_card_list = []
         self.num_total_cards = 0
 
-        self.tags = [""] + tag_list(self.orig_card_list, sort="asc")
+        self.tags = [""] + tag_list(self.ltm_card_list, sort="asc")
 
         self.professor = ProfessorBrutus(self.current_card_list)
         self.professor.add_reply_observer(self)
@@ -39,8 +41,13 @@ class ForwardTestTab(QWidget):
         self.combo_tag_filter.addItems(self.tags)
         self.combo_tag_filter.setEditable(True)
         self.combo_tag_filter.completer().setCompletionMode(QCompleter.PopupCompletion)
-
         self.combo_tag_filter.currentIndexChanged.connect(self.filter_combo_callback)
+
+        self.combo_card_level = QComboBox()
+        self.combo_card_level.addItems([""] + [str(x) for x in range(max_grade)] + ["-1"])
+        self.combo_card_level.setEditable(True)
+        self.combo_card_level.completer().setCompletionMode(QCompleter.PopupCompletion)
+        self.combo_card_level.currentIndexChanged.connect(self.card_level_combo_callback)
 
         self.spinbox_null_period = QSpinBox()
         self.spinbox_null_period.setMinimum(0)
@@ -58,6 +65,7 @@ class ForwardTestTab(QWidget):
 
         filter_layout.addRow("Contains:", self.line_edit_contains_filter)
         filter_layout.addRow("Tag:", self.combo_tag_filter)
+        filter_layout.addRow("Card level:", self.combo_card_level)
         filter_layout.addRow("Min. num. of days since the last assessment:", self.spinbox_null_period)
 
         # VBox
@@ -80,6 +88,11 @@ class ForwardTestTab(QWidget):
         self.update_selection_callback()
 
 
+    def card_level_combo_callback(self):
+        self.update_selection_callback()
+        self.combo_card_level.setFocus()            # Workaround: without this line, the lineedit widget loose focus after each HTML update...
+
+
     def null_period_spinbox_callback(self):
         self.update_selection_callback()
 
@@ -87,9 +100,11 @@ class ForwardTestTab(QWidget):
     def update_selection_callback(self):
         content_text = self.line_edit_contains_filter.text()
         selected_tag = self.combo_tag_filter.currentText()
+        card_level = self.combo_card_level.currentText()
+        card_level = None if card_level == "" else int(card_level)
         null_period = self.spinbox_null_period.value()
 
-        self.current_card_list = [card for card in self.orig_card_list if review_card(card, selected_tag, content_text, null_period)]
+        self.current_card_list = [card for card in self.ltm_card_list if review_card(card, selected_tag, content_text, null_period, card_level)]
         self.professor.update_card_list(self.current_card_list)
 
         self.num_total_cards = len(self.current_card_list)
@@ -107,7 +122,7 @@ class ForwardTestTab(QWidget):
         self.num_remaining_cards_label.setText(REMAINING_CARDS_LABEL.format(num_reviewed_cards, num_remaining_cards, num_total_cards))
 
 
-def review_card(card, selected_tag, content_text, null_period, date_mock=None):
+def review_card(card, selected_tag, content_text, null_period, card_level, date_mock=None):
 
     if date_mock is None:
         today = datetime.date.today()
@@ -122,6 +137,9 @@ def review_card(card, selected_tag, content_text, null_period, date_mock=None):
         return False
 
     if (selected_tag != "") and (not selected_tag in card["tags"]):
+        return False
+
+    if (card_level is not None) and (card["grade"] != card_level):
         return False
     
     if (content_text != "") and (card["question"].lower().find(content_text.lower()) == -1) and (card["answer"].lower().find(content_text.lower()) == -1):
