@@ -55,6 +55,8 @@ MATHJAX = r'''<script type="text/x-mathjax-config">
     </script>
 '''
 
+SCROLL_Y_STEP_SIZE_PX = 500
+
 def get_css():
     html_scale = opcgui.config.html_scale
     scale_str = "{:.1f}".format(html_scale)
@@ -280,6 +282,8 @@ class TestWidget(QWidget):
         self.tabs = parent
         self.main_window = main_window
 
+        self.show_answer = False
+
         # Make widgets ####################################
 
         self.web_view = QWebEngineView(parent=self)
@@ -345,7 +349,7 @@ class TestWidget(QWidget):
 
         # see https://stackoverflow.com/a/17631703  and  http://doc.qt.io/qt-5/qaction.html#details
 
-        # Answer action
+        # Answer action #########################
 
         answer_action = QAction(self)
         answer_action.setShortcut(Qt.Key_Space)
@@ -354,7 +358,8 @@ class TestWidget(QWidget):
         answer_action.triggered.connect(self.answer_btn_callback)
         self.addAction(answer_action)
 
-        # Answer action (alternative shortcut for remote controls)
+        # Answer action
+        # (alternative shortcut for remote controls)
 
         alt_answer_action = QAction(self)
         alt_answer_action.setShortcut(Qt.SHIFT | Qt.Key_F5)
@@ -363,7 +368,17 @@ class TestWidget(QWidget):
         alt_answer_action.triggered.connect(self.answer_btn_callback)
         self.addAction(alt_answer_action)
 
-        # Skip card action
+        # Answer action
+        # (alternative shortcut for numeric pad)
+
+        alt2_answer_action = QAction(self)
+        alt2_answer_action.setShortcut(Qt.Key_5)
+        alt2_answer_action.setShortcutContext(Qt.WindowShortcut)
+
+        alt2_answer_action.triggered.connect(self.answer_btn_callback)
+        self.addAction(alt2_answer_action)
+
+        # Skip card action ######################
 
         skip_card_action = QAction(self)
         skip_card_action.setShortcut(Qt.CTRL | Qt.Key_Space)
@@ -372,7 +387,8 @@ class TestWidget(QWidget):
         skip_card_action.triggered.connect(self.skip_card_btn_callback)
         self.addAction(skip_card_action)
 
-        # Skip card action (alternative shortcut for remote controls)
+        # Skip card action
+        # (alternative shortcut for remote controls)
 
         alt_skip_card_action = QAction(self)
         alt_skip_card_action.setShortcut(Qt.Key_Escape)
@@ -381,7 +397,17 @@ class TestWidget(QWidget):
         alt_skip_card_action.triggered.connect(self.skip_card_btn_callback)
         self.addAction(alt_skip_card_action)
 
-        # Skip level action
+        # Skip card action
+        # (alternative shortcut for numeric pad)
+
+        alt2_skip_card_action = QAction(self)
+        alt2_skip_card_action.setShortcut(Qt.Key_Asterisk)
+        alt2_skip_card_action.setShortcutContext(Qt.WindowShortcut)
+
+        alt2_skip_card_action.triggered.connect(self.skip_card_btn_callback)
+        self.addAction(alt2_skip_card_action)
+
+        # Skip level action #####################
 
         skip_level_action = QAction(self)
         skip_level_action.setShortcut(Qt.CTRL | Qt.Key_PageUp)
@@ -390,7 +416,17 @@ class TestWidget(QWidget):
         skip_level_action.triggered.connect(self.skip_level_callback)
         self.addAction(skip_level_action)
 
-        # Hide card action
+        # Skip level action
+        # (alternative shortcut for numeric pad)
+
+        alt2_skip_level_action = QAction(self)
+        alt2_skip_level_action.setShortcut(Qt.Key_Slash)
+        alt2_skip_level_action.setShortcutContext(Qt.WindowShortcut)
+
+        alt2_skip_level_action.triggered.connect(self.skip_level_callback)
+        self.addAction(alt2_skip_level_action)
+
+        # Hide card action ######################
 
         hide_card_action = QAction(self)
         hide_card_action.setShortcut(Qt.SHIFT | Qt.Key_Space)
@@ -399,53 +435,109 @@ class TestWidget(QWidget):
         hide_card_action.triggered.connect(self.hide_card_btn_callback)
         self.addAction(hide_card_action)
 
-        # Right answer action
+        # Hide card action
+        # (alternative shortcut for numeric pad)
+
+        alt2_hide_card_action = QAction(self)
+        alt2_hide_card_action.setShortcut(Qt.Key_Backspace)
+        alt2_hide_card_action.setShortcutContext(Qt.WindowShortcut)
+
+        alt2_hide_card_action.triggered.connect(self.hide_card_btn_callback)
+        self.addAction(alt2_hide_card_action)
+
+        # Right answer action ###################
 
         right_answer_action = QAction(self)
         right_answer_action.setShortcut(Qt.Key_L)
+        right_answer_action.setShortcutContext(Qt.WindowShortcut)
 
         right_answer_action.triggered.connect(self.right_answer_btn_callback)
         self.addAction(right_answer_action)
 
-        # Right answer action (alternative shortcut for remote controls)
+        # Right answer action
+        # (alternative shortcut for remote controls)
 
         alt_right_answer_action = QAction(self)
         alt_right_answer_action.setShortcut(Qt.Key_PageDown)
+        alt_right_answer_action.setShortcutContext(Qt.WindowShortcut)
 
         alt_right_answer_action.triggered.connect(self.right_answer_btn_callback)
         self.addAction(alt_right_answer_action)
 
-        # Wrong answer action
+        # Right answer action
+        # (alternative shortcut for numeric pad)
+
+        alt2_right_answer_action = QAction(self)
+        alt2_right_answer_action.setShortcut(Qt.Key_6)
+        alt2_right_answer_action.setShortcutContext(Qt.WindowShortcut)
+
+        alt2_right_answer_action.triggered.connect(self.right_answer_btn_callback)
+        self.addAction(alt2_right_answer_action)
+
+        # Wrong answer action ###################
 
         wrong_answer_action = QAction(self)
         wrong_answer_action.setShortcut(Qt.Key_H)
+        wrong_answer_action.setShortcutContext(Qt.WindowShortcut)
 
         wrong_answer_action.triggered.connect(self.wrong_answer_btn_callback)
         self.addAction(wrong_answer_action)
 
-        # Wrong answer action (alternative shortcut for remote controls)
+        # Wrong answer action
+        # (alternative shortcut for remote controls)
 
         alt_wrong_answer_action = QAction(self)
         alt_wrong_answer_action.setShortcut(Qt.Key_PageUp)
+        alt_wrong_answer_action.setShortcutContext(Qt.WindowShortcut)
 
         alt_wrong_answer_action.triggered.connect(self.wrong_answer_btn_callback)
         self.addAction(alt_wrong_answer_action)
 
-        # Right answer action + hide
+        # Wrong answer action
+        # (alternative shortcut for numeric pad)
+
+        alt2_wrong_answer_action = QAction(self)
+        alt2_wrong_answer_action.setShortcut(Qt.Key_4)
+        alt2_wrong_answer_action.setShortcutContext(Qt.WindowShortcut)
+
+        alt2_wrong_answer_action.triggered.connect(self.wrong_answer_btn_callback)
+        self.addAction(alt2_wrong_answer_action)
+
+        # Right answer action + hide ############
 
         right_answer_and_hide_action = QAction(self)
         right_answer_and_hide_action.setShortcut(Qt.SHIFT | Qt.Key_L)
+        right_answer_and_hide_action.setShortcutContext(Qt.WindowShortcut)
 
         right_answer_and_hide_action.triggered.connect(self.right_answer_and_hide_callback)
         self.addAction(right_answer_and_hide_action)
 
-        # Wrong answer action + hide
+        # Wrong answer action + hide ############
 
         wrong_answer_and_hide_action = QAction(self)
         wrong_answer_and_hide_action.setShortcut(Qt.SHIFT | Qt.Key_H)
+        wrong_answer_and_hide_action.setShortcutContext(Qt.WindowShortcut)
 
         wrong_answer_and_hide_action.triggered.connect(self.wrong_answer_and_hide_callback)
         self.addAction(wrong_answer_and_hide_action)
+
+        # Scroll up action ######################
+
+        scroll_up_action = QAction(self)
+        scroll_up_action.setShortcut(Qt.Key_8)
+        scroll_up_action.setShortcutContext(Qt.WindowShortcut)
+
+        scroll_up_action.triggered.connect(self.scroll_up_callback)
+        self.addAction(scroll_up_action)
+
+        # Scroll down action ####################
+
+        scroll_down_action = QAction(self)
+        scroll_down_action.setShortcut(Qt.Key_2)
+        scroll_down_action.setShortcutContext(Qt.WindowShortcut)
+
+        scroll_down_action.triggered.connect(self.scroll_down_callback)
+        self.addAction(scroll_down_action)
 
         # Set slots #######################################
 
@@ -458,11 +550,27 @@ class TestWidget(QWidget):
 
         # Set QWebEngineView ##############################
 
+        self.web_view.loadFinished.connect(self.on_load_finished)
+
         self.update_html(show_answer=False)
+
+
+    def on_load_finished(self):
+        # Scroll
+        if self.professor.current_card is not None:
+            if self.show_answer:
+                js_script = """
+                    var scrollposy = document.getElementById("answer").offsetTop;
+                    window.scrollTo(0, scrollposy);
+                    """
+                self.web_view.page().runJavaScript(js_script)  # Go to the answer
+            else:
+                self.set_scroll_position(y=0)                  # Go to the begining
 
 
     def update_html(self, show_answer=False, feedback=None):
         current_card = self.professor.current_card
+        self.show_answer = show_answer
 
         if current_card is not None:
 
@@ -496,7 +604,7 @@ class TestWidget(QWidget):
 
             # Question
 
-            html_body += r'<h1 class="question">Question</h1>'
+            html_body += r'<h1 class="question" id="question">Question</h1>'        # "id=..." is to make an anchor
             html_body += r'<div class="question">'
             html_body += question_answer_to_html(current_card["question"])
             html_body += r'</div>'
@@ -504,10 +612,11 @@ class TestWidget(QWidget):
             # Answer
 
             if show_answer:
-                html_body += r'<h1 class="answer">Answer</h1>'
+                html_body += r'<h1 class="answer" id="answer">Answer</h1>'          # "id=..." is to make an anchor
                 html_body += r'<div class="answer">'
                 html_body += question_answer_to_html(current_card["answer"])
                 html_body += r'</div>'
+
         else:
             html_body = r'<div id="empty">Empty selection</div>'
 
@@ -538,6 +647,24 @@ class TestWidget(QWidget):
         #    print(html, file=fd)
 
         self.web_view.setHtml(html, self.base_url)
+
+
+
+    def set_scroll_position(self, x=0, y=0):
+        self.web_view.page().runJavaScript("window.scrollTo({}, {});".format(x, y))
+
+
+    def scroll_up_callback(self):
+        current_scroll_y = int(self.web_view.page().scrollPosition().y())
+        scroll_y = max(0, current_scroll_y - SCROLL_Y_STEP_SIZE_PX)
+        self.set_scroll_position(y=scroll_y)
+
+
+    def scroll_down_callback(self):
+        current_scroll_y = int(self.web_view.page().scrollPosition().y())
+        scroll_y = current_scroll_y + SCROLL_Y_STEP_SIZE_PX
+        self.set_scroll_position(y=scroll_y)
+
 
     def answer_btn_callback(self):
         if self.stack_layout.currentWidget() == self.navigation_widget:
