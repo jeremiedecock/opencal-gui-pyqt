@@ -55,22 +55,9 @@ MATHJAX = r'''<script type="text/x-mathjax-config">
     </script>
 '''
 
-SCROLL_Y_STEP_SIZE_PX = 500
+SCROLL_Y_STEP_SIZE_PX = 100
 
 def get_css():
-    html_scale = opcgui.config.html_scale
-    scale_str = "{:.1f}".format(html_scale)
-
-    #if html_scale > 1:
-    #    width_str = "width: {:d}%;".format(math.ceil(1./html_scale * 100.))
-    #else:
-    #    width_str = ""
-
-    # To avoid horizontal scrolling due to the "scale" CSS property
-    # (without this correction of the "body.width" property, the card's text stick out the window
-    # and a horizontal scroll bar appears).
-    width_str = "{:d}".format(math.floor(1./html_scale * 100.))
-
     css = r'''
     /* Copyright (c) 2006,2007,2008,2009,2010,2011 Jérémie DECOCK (jdhp.org)     */
 
@@ -193,9 +180,7 @@ def get_css():
     }
 
     body {
-        transform         : scale(''' + scale_str + r''');
         transform-origin  : 0 0;
-        width             : ''' + width_str + r'''%;
     }
     '''
 
@@ -655,14 +640,16 @@ class TestWidget(QWidget):
 
 
     def scroll_up_callback(self):
-        current_scroll_y = int(self.web_view.page().scrollPosition().y())
-        scroll_y = max(0, current_scroll_y - SCROLL_Y_STEP_SIZE_PX)
+        current_scroll_y = self.web_view.page().scrollPosition().y()
+        fixed_current_scroll_y = current_scroll_y / opcgui.config.html_scale    # the current position have to be fixed taking into accout the zoom factor to avoid strange behavior... (bug in QWebViewEngine ?)
+        scroll_y = max(0, fixed_current_scroll_y - SCROLL_Y_STEP_SIZE_PX)
         self.set_scroll_position(y=scroll_y)
 
 
     def scroll_down_callback(self):
-        current_scroll_y = int(self.web_view.page().scrollPosition().y())
-        scroll_y = current_scroll_y + SCROLL_Y_STEP_SIZE_PX
+        current_scroll_y = self.web_view.page().scrollPosition().y()
+        fixed_current_scroll_y = current_scroll_y / opcgui.config.html_scale    # the current position have to be fixed taking into accout the zoom factor to avoid strange behavior... (bug in QWebViewEngine ?)
+        scroll_y = fixed_current_scroll_y + SCROLL_Y_STEP_SIZE_PX
         self.set_scroll_position(y=scroll_y)
 
 

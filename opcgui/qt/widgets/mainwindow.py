@@ -144,10 +144,7 @@ class MainWindow(QMainWindow):
         opcgui.config.html_scale = html_scale
 
         for test_widget in (self.daily_test_tab, self.forward_test_tab.test_widget, self.review_tab.test_widget):
-            if test_widget.stack_layout.currentWidget() == test_widget.navigation_widget:
-                test_widget.update_html(show_answer=False)
-            if test_widget.stack_layout.currentWidget() == test_widget.answer_widget:
-                test_widget.update_html(show_answer=True)
+            test_widget.web_view.setZoomFactor(html_scale)
 
 
     def zoom_in_callback(self):
