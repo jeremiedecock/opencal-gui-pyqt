@@ -17,7 +17,12 @@ from opcgui import APPLICATION_NAME
 import os
 import tempfile
 
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMainWindow, QTabWidget, QAction
+
+SMALL_SCALE = 0.6
+MEDIUM_SCALE = 1.0
+LARGE_SCALE = 2.5
 
 class MainWindow(QMainWindow):
 
@@ -106,9 +111,34 @@ class MainWindow(QMainWindow):
         config_menu.addAction(font_normal_action)
         config_menu.addAction(font_large_action)
 
+        # Zoom in
+
+        zoom_in_action = QAction(self)
+        zoom_in_action.setShortcut(Qt.Key_Plus)
+        zoom_in_action.setShortcutContext(Qt.WindowShortcut)
+
+        zoom_in_action.triggered.connect(self.zoom_in_callback)
+        self.addAction(zoom_in_action)
+
+        # Zoom out
+
+        zoom_out_action = QAction(self)
+        zoom_out_action.setShortcut(Qt.Key_Minus)
+        zoom_out_action.setShortcutContext(Qt.WindowShortcut)
+
+        zoom_out_action.triggered.connect(self.zoom_out_callback)
+        self.addAction(zoom_out_action)
+
         # Show ############################################
 
         self.show()
+
+
+    def get_webview_html_scale(self):
+        if hasattr(opcgui.config, "html_scale"):
+            return opcgui.config.html_scale
+        else:
+            return MEDIUM_SCALE
 
     def set_webview_html_scale(self, html_scale):
         opcgui.config.html_scale = html_scale
@@ -119,11 +149,29 @@ class MainWindow(QMainWindow):
             if test_widget.stack_layout.currentWidget() == test_widget.answer_widget:
                 test_widget.update_html(show_answer=True)
 
+
+    def zoom_in_callback(self):
+        current_scale = self.get_webview_html_scale()
+
+        if current_scale == SMALL_SCALE:
+            self.set_webview_html_scale(html_scale=MEDIUM_SCALE)
+        elif current_scale == MEDIUM_SCALE:
+            self.set_webview_html_scale(html_scale=LARGE_SCALE)
+
+    def zoom_out_callback(self):
+        current_scale = self.get_webview_html_scale()
+
+        if current_scale == MEDIUM_SCALE:
+            self.set_webview_html_scale(html_scale=SMALL_SCALE)
+        elif current_scale == LARGE_SCALE:
+            self.set_webview_html_scale(html_scale=MEDIUM_SCALE)
+
+
     def font_small_calback(self):
-        self.set_webview_html_scale(html_scale=0.6)
+        self.set_webview_html_scale(html_scale=SMALL_SCALE)
 
     def font_normal_calback(self):
-        self.set_webview_html_scale(html_scale=1.0)
+        self.set_webview_html_scale(html_scale=MEDIUM_SCALE)
 
     def font_large_calback(self):
-        self.set_webview_html_scale(html_scale=2.5)
+        self.set_webview_html_scale(html_scale=LARGE_SCALE)
