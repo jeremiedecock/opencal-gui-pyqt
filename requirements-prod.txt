@@ -1,0 +1,4 @@
+opencal
+opcgui
+#opencal @ git+ssh://git@gitlab.com/jdhp/opencal-lib-python.git
+#opcgui @ git+ssh://git@gitlab.com/jdhp/opencal-gui-pyqt.git

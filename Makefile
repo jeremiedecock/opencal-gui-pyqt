@@ -10,7 +10,6 @@ all: help
 .PHONY : all \
          analyse \
          clean \
-         conda \
          cov \
          doc \
          doc-publish \
@@ -41,7 +40,6 @@ PYTHON=python3
 #	@echo '  help                Print this help message (the default)'
 #	@echo '  init                Import submodules'
 #	@echo '  clean               Remove generated files'
-#       @echo '  env                 Create a conda environment for ctapipe development'
 #	@echo '  develop             Make symlinks to this package in python install dir'
 #	@echo '  test                Run tests'
 #	@echo '  doc                 Generate Sphinx docs'
@@ -50,7 +48,6 @@ PYTHON=python3
 #	@echo ''
 #	@echo 'Advanced targets (for experts):'
 #	@echo ''
-#	@echo '  conda               Build a conda package for distribution'
 #	@echo '  doc-publish-jdhp    Generate and upload the docs to www.jdhp.org'
 #	@echo '  doc-publish-github  Generate and upload the docs to GitHub'
 #	@echo ''
@@ -69,30 +66,32 @@ list:
 analyze:
 	@pyflakes $(PYTHON_PACKAGE_NAME) examples
 
-dev-env:
-	conda env create -n ailib-dev -f environment.yml
-	source activate ailib-dev
+create-venv:
+	conda deactivate
+	rm -rf env
+	python3 -m venv env
+	source ./env/bin/activate
+	python3 -m pip install --upgrade pip
+	python3 -m pip install -r requirements.txt
+	pip install -e .
 
-env:
-	conda env create -n ailib -f environment.yml
-	source activate ailib
+activate-venv:
+	conda deactivate
+	source ./env/bin/activate
 
 init:
 	git submodule init
 	git submodule update
 
-conda:
-	$(PYTHON) setup.py bdist_conda
-
 cov:
 	# See http://pytest-cov.readthedocs.io/en/latest/readme.html
-	pytest --cov=ailib ailib/
+	pytest --cov=opcgui opcgui/
 
 doc:
-	$(PYTHON) setup.py build_sphinx
+	sphinx-build -b html docs/ build/sphinx/html/
 
 doc-show:
-	$(PYTHON) setup.py build_sphinx --open-docs-in-browser
+	sphinx-build -b html docs/ build/sphinx/html/ --open-docs-in-browser
 
 doc-publish: doc-publish-jdhp
 
@@ -102,18 +101,18 @@ doc-publish-github: doc
 	ghp-import -n -p -m 'Update gh-pages docs' build/sphinx/html
 
 doc-publish-jdhp: doc
-	# AILIB_DOCS_URI is a shell environment variable that contains the
+	# JDHP_DOCS_URI is a shell environment variable that contains the
 	# destination URI of the HTML files.
-	@if test -z $$AILIB_DOCS_URI ; then exit 1 ; fi
+	@if test -z $$JDHP_DOCS_URI ; then exit 1 ; fi
 
 	# Upload the HTML files
-	rsync -r -v -e ssh $(HTML_TMP_DIR)/ ${AILIB_DOCS_URI}/
+	rsync -r -v -e ssh $(HTML_TMP_DIR)/ ${JDHP_DOCS_URI}/
 
 pep8:
 	@pep8 --statistics
 
 test:
-	$(PYTHON) setup.py test -V $<
+	pytest
 
 trailing-spaces:
 	find $(PYTHON_PACKAGE_NAME) examples docs -name "*.py" -exec perl -pi -e 's/[ \t]*$$//' {} \;
@@ -125,9 +124,10 @@ publish: pypi
 
 pypi:
 	# Upload the package to pypi.org
-	python3 setup.py sdist upload
+	python3 -m build
+	twine upload dist/*
 	# Check the README file to prevent formatting issues on the pypi.org project page
-	python3 setup.py check --restructuredtext
+	sphinx-build check --restructuredtext
 
 
 ## CLEAN ######################################################################
@@ -143,16 +143,9 @@ clean:
 	@rm -rvf *.egg-info/
 	@rm -rvf htmlcov/
 	@rm -rvf debian
-	@rm -vf MANIFEST
+	@rm -v MANIFEST
 	@find . -type d -iname "__pycache__" -exec rm -rfv {} \;
 	@find . -type f -iname "*.pyc" -exec rm -v {} \;
 	@find . -type f -iname "*.pyo" -exec rm -v {} \;
 	@find . -type f -iname "*.pyd" -exec rm -v {} \;
-	@find . -type f -iname "*.so"  -exec rm -v {} \;
-	$(PYTHON) setup.py $@ --all
-
-## ANY OTHER COMMAND CAN BE PASSED TO SETUP.PY ################################
-
-%:
-	$(PYTHON) setup.py $@
-
+	@find . -type f -iname "*.so"  -exec rm -v {}

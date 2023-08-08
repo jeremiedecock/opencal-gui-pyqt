@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from PyQt5.QtCore import Qt, QAbstractTableModel, QVariant, QSortFilterProxyModel, QRegExp
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLineEdit, QTableView, QAbstractItemView
+from PySide6.QtCore import Qt, QAbstractTableModel, QSortFilterProxyModel, QRegularExpression
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QLineEdit, QTableView, QAbstractItemView
 
 import opencal.core.tags
 
@@ -33,8 +33,6 @@ class TagsTableModel(QAbstractTableModel):
                 return self.tag_list[row][column]
             else:
                 return ""
-
-        return QVariant()
 
     def headerData(self, index, orientation, role):
         num_columns = len(self.tag_list[0]) if len(self.tag_list) > 0 else 0
@@ -152,4 +150,4 @@ class TagsTab(QWidget):
 
     def tag_filter_callback(self):
         filter_str = self.tag_filter_line_edit.text()
-        self.proxy_model.setFilterRegExp(QRegExp(filter_str, Qt.CaseInsensitive, QRegExp.FixedString))
+        self.proxy_model.setFilterRegExp(QRegularExpression(filter_str, Qt.CaseInsensitive, QRegularExpression.FixedString))

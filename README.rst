@@ -28,70 +28,44 @@ Note:
 Dependencies
 ============
 
-*  Python >= 3.0
+C.f. requirements.txt
+
 
 .. _install:
 
-Installation
-============
+Installation (development environment)
+======================================
 
-Gnu/Linux
----------
+Posix (Linux, MacOSX, WSL, ...)
+-------------------------------
 
-You can install, upgrade, uninstall OpenCAL GUI with these commands (in a
-terminal)::
+From the OpenCAL GUI source code::
 
-    pip install --pre opcgui
-    pip install --upgrade opcgui
-    pip uninstall opcgui
+    conda deactivate         # Only if you use Anaconda...
+    python3 -m venv env
+    source env/bin/activate
+    python3 -m pip install --upgrade pip
+    python3 -m pip install -r requirements-dev.txt
 
-Or, if you have downloaded the OpenCAL GUI source code::
-
-    python3 setup.py install
-
-.. There's also a package for Debian/Ubuntu::
-.. 
-..     sudo apt-get install opcgui
 
 Windows
 -------
 
-.. Note:
-.. 
-..     The following installation procedure has been tested to work with Python
-..     3.4 under Windows 7.
-..     It should also work with recent Windows systems.
+From the OpenCAL GUI source code::
 
-You can install, upgrade, uninstall OpenCAL GUI with these commands (in a
-`command prompt`_)::
+    conda deactivate         # Only if you use Anaconda...
+    python3 -m venv env
+    env\Scripts\activate.bat
+    python3 -m pip install --upgrade pip
+    python3 -m pip install -r requirements-dev.txt
 
-    py -m pip install --pre opcgui
-    py -m pip install --upgrade opcgui
-    py -m pip uninstall opcgui
 
-Or, if you have downloaded the OpenCAL GUI source code::
+Installation (production environment)
+=====================================
 
-    py setup.py install
+::
 
-MacOSX
--------
-
-.. Note:
-.. 
-..     The following installation procedure has been tested to work with Python
-..     3.5 under MacOSX 10.9 (*Mavericks*).
-..     It should also work with recent MacOSX systems.
-
-You can install, upgrade, uninstall OpenCAL GUI with these commands (in a
-terminal)::
-
-    pip install --pre opcgui
-    pip install --upgrade opcgui
-    pip uninstall opcgui
-
-Or, if you have downloaded the OpenCAL GUI source code::
-
-    python3 setup.py install
+    python3 -m pip install opcgui
 
 
 Documentation

@@ -3,8 +3,8 @@
 
 import datetime
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QSplitter, QPushButton
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QSplitter, QPushButton
 
 from opcgui.qt.widgets.richtexteditor import RichTextEditor
 from opcgui.qt.widgets.tagseditor import TagsEditor

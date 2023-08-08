@@ -1,25 +1,30 @@
-image: continuumio/miniconda3:latest
+image: python:3.8-slim
+
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
 
 before_script:
-- apt-get update -q -y
-- apt-get install -y build-essential
+- apt update -q -y
+- apt-get install -y build-essential unzip
 - export PIP_CACHE_DIR="/opt/cache/pip"
-- conda env create -f environment.yml
-- source activate opcgui-dev
-- python3 setup.py develop
-
-pages:
-  stage: deploy
-  script:
-  - make doc
-  - mv build/sphinx/html/ public/
-  artifacts:
-    paths:
-    - public
-  only:
-  - master
+- python3 -m pip install -r requirements-build.txt
+- python3 -m pip install .
 
 test:
   stage: test
   script:
   - pytest
+
+pages:
+  stage: deploy
+  script:
+  - sphinx-build -b html docs/ build/sphinx/html/
+  - mv build/sphinx/html/ public/
+  - coverage run -m pytest
+  - coverage html
+  - mv htmlcov public/
+  artifacts:
+    paths:
+    - public
+  only:
+  - master

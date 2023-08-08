@@ -12,7 +12,7 @@ import opcgui
 
 from opcgui.qt.widgets.test import TestWidget
 
-from PyQt5.QtWidgets import QWidget, QComboBox, QVBoxLayout
+from PySide6.QtWidgets import QWidget, QComboBox, QVBoxLayout
 
 NEW_CARDS_STR = "New cards"
 WRONG_CARDS_STR = "Tested cards (with wrong answer)"

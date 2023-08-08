@@ -1,0 +1,7 @@
+matplotlib
+numpy
+pandas
+pyside6==6.2.2.1
+pyyaml
+scipy
+seaborn

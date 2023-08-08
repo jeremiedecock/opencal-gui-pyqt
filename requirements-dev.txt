@@ -1,0 +1,11 @@
+-r requirements-build.txt
+-e ../opencal-lib-python
+-e .
+#ipydatagrid
+ipython
+#ipywidgets
+jupyterlab
+matplotlib
+#plotly
+seaborn
+#voila

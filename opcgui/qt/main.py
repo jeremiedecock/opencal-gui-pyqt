@@ -9,7 +9,7 @@ import opcgui
 from opcgui.qt.widgets.mainwindow import MainWindow
 from opcgui import APPLICATION_NAME
 
-from PyQt5.QtWidgets import QApplication
+from PySide6.QtWidgets import QApplication
 
 
 def main():

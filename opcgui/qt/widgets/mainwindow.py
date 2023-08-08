@@ -17,8 +17,9 @@ from opcgui import APPLICATION_NAME
 import os
 import tempfile
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QMainWindow, QTabWidget, QAction
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QAction
+from PySide6.QtWidgets import QMainWindow, QTabWidget
 
 SMALL_SCALE = 0.6
 MEDIUM_SCALE = 1.0

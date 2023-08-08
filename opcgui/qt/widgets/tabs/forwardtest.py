@@ -7,7 +7,7 @@ from opencal.core.tags import tag_list
 from opcgui.qt.widgets.test import TestWidget
 from opcgui.utils import datetime_to_date
 
-from PyQt5.QtWidgets import QWidget, QComboBox, QLabel, QVBoxLayout, QLineEdit, QFormLayout, QCompleter, QSpinBox
+from PySide6.QtWidgets import QWidget, QComboBox, QLabel, QVBoxLayout, QLineEdit, QFormLayout, QCompleter, QSpinBox
 
 import datetime
 

@@ -5,20 +5,16 @@
 import ctypes
 ctypes.CDLL("libGL.so.1", mode=ctypes.RTLD_GLOBAL)
 
-import datetime
-import os
 import re
-import time
-import math
 
 from opencal.core.data import RIGHT_ANSWER_STR, WRONG_ANSWER_STR
 from opcgui.utils import datetime_to_date
 
-from PyQt5.QtCore import Qt, QModelIndex, QSortFilterProxyModel, QUrl
-from PyQt5.QtWidgets import QTableView, QWidget, QPushButton, QVBoxLayout, QAbstractItemView, \
-    QAction, QPlainTextEdit, QLineEdit, QHBoxLayout, QStackedLayout
-from PyQt5.QtWebEngineWidgets import QWebEngineView
-from PyQt5.QtWidgets import QApplication, QSizePolicy
+from PySide6.QtCore import Qt, QUrl, QEventLoop, Signal
+from PySide6.QtGui import QAction
+from PySide6.QtWidgets import QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QStackedLayout
+from PySide6.QtWebEngineWidgets import QWebEngineView
+from PySide6.QtWidgets import QSizePolicy, QFileDialog
 
 import opcgui
 
@@ -255,6 +251,7 @@ def question_answer_to_html(question_or_answer):
 
 
 class TestWidget(QWidget):
+    html_export_finished = Signal()
 
     def __init__(self, professor, context_directory, main_window, parent=None):
         super().__init__(parent=parent)
@@ -524,6 +521,22 @@ class TestWidget(QWidget):
         scroll_down_action.triggered.connect(self.scroll_down_callback)
         self.addAction(scroll_down_action)
 
+        # Save to HTML action ###################
+
+        save_to_html_action = QAction(self)
+        save_to_html_action.setShortcut(Qt.CTRL | Qt.Key_H)
+
+        save_to_html_action.triggered.connect(self.save_to_html_callback)
+        self.addAction(save_to_html_action)
+
+        # Save to PDF action ####################
+
+        save_to_pdf_action = QAction(self)
+        save_to_pdf_action.setShortcut(Qt.CTRL | Qt.Key_P)
+
+        save_to_pdf_action.triggered.connect(self.save_to_pdf_callback)
+        self.addAction(save_to_pdf_action)
+
         # Set slots #######################################
 
         self.btn_answer.clicked.connect(self.answer_btn_callback)
@@ -701,3 +714,31 @@ class TestWidget(QWidget):
 
     def wrong_answer_and_hide_callback(self):
         self.wrong_answer_btn_callback(hide=True)
+
+
+    def save_to_pdf_callback(self):
+        # https://doc.qt.io/qt-6/qwebengineview.html#printToPdf
+        pdf_file_path, _ = QFileDialog.getSaveFileName(self, "Save Page As", opcgui.path.expand_path("~"), "PDF (*.pdf);;" "All files(*.*)")
+        if pdf_file_path:
+            print(f"Save to PDF to {pdf_file_path}")
+
+            self.web_view.printToPdf(pdf_file_path)
+
+
+    def html_export_finished_callback(self, html):
+        self.html_export_str = html
+        self.html_export_finished.emit()
+
+    def save_to_html_callback(self):
+        # https://doc.qt.io/qt-6/qwebenginepage.html#toHtml
+        # https://stackoverflow.com/questions/48386253/save-html-files-in-qwebengineview-browser
+        html_file_path, _ = QFileDialog.getSaveFileName(self, "Save Page As", opcgui.path.expand_path("~"), "Hypertext Markup Language (*.htm *.html);;" "All files(*.*)")
+        if html_file_path:
+            print(f"Save to HTML to {html_file_path}")
+
+            self.web_view.page().toHtml(self.html_export_finished_callback)
+            loop = QEventLoop()
+            self.html_export_finished.connect(loop.quit)
+            loop.exec()
+            with open(html_file_path, 'w') as fd:
+                fd.write(self.html_export_str)

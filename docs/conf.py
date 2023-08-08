@@ -16,6 +16,7 @@
 import sys
 import os
 import sphinx_rtd_theme
+from sphinx_gallery.sorting import FileNameSortKey, ExampleTitleSortKey
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -81,7 +82,7 @@ release = '.'.join(project_version)
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = 'en'
 
 # There are two options for replacing |today|: either, you set today to some
 # non-false value, then it is used:
@@ -172,7 +173,7 @@ if html_theme == 'sphinx_rtd_theme':
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+#html_static_path = ['_static']
 
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied
@@ -358,7 +359,7 @@ texinfo_documents = [
 
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'https://docs.python.org/': None}
+#intersphinx_mapping = {'https://docs.python.org/': None}
 
 # Sphinx gallery configuration
 sphinx_gallery_conf = {
@@ -366,5 +367,6 @@ sphinx_gallery_conf = {
     'examples_dirs': '../examples',
     # path where to save gallery generated examples
     'gallery_dirs': 'gallery',
-    'backreferences_dir': False,
+    'backreferences_dir': None,
+    'within_subsection_order': FileNameSortKey,  # https://sphinx-gallery.github.io/stable/configuration.html#sorting-gallery-examples
 }
