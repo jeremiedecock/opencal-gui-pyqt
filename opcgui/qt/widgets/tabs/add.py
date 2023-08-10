@@ -3,10 +3,11 @@
 
 import datetime
 
+import qtme
+
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QSplitter, QPushButton
 
-from opcgui.qt.widgets.richtexteditor import RichTextEditor
 from opcgui.qt.widgets.tagseditor import TagsEditor
 
 class AddCardsTab(QWidget):
@@ -22,8 +23,8 @@ class AddCardsTab(QWidget):
 
         self.splitter = QSplitter(orientation=Qt.Vertical, parent=self)
 
-        self.question_editor = RichTextEditor(context_directory=self.context_directory, parent=self, placeholder_text="Question")
-        self.answer_editor = RichTextEditor(context_directory=self.context_directory, parent=self, placeholder_text="Answer")
+        self.question_editor = qtme.widgets.QMultimediaEditor(parent=self, layout="stacked", html_scale=0.8, placeholder_text="Question", stacked_default_widget="editor")
+        self.answer_editor = qtme.widgets.QMultimediaEditor(parent=self, layout="stacked", html_scale=0.8, placeholder_text="Answer", stacked_default_widget="editor")
         self.tags_editor = TagsEditor(self.card_list, parent=self)
 
         self.tags_editor.setMaximumHeight(18 * 4)           # TODO: define height as 4 times the font height

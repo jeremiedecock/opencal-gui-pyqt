@@ -65,6 +65,7 @@ class Config:
     tag_priority_dict: dict
     tag_difficulty_dict: dict
     reverse_level_0: bool
+    default_html_base_path: str
 
 config = None       # The instance that contains the loaded configuration
 

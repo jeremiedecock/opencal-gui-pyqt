@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
+import qtme
 
 import opencal.io.pkb
 import opcgui
@@ -16,6 +17,8 @@ def main():
 
     # Load configuration file
     opcgui.load_config_file()
+
+    qtme.cfg['qtme']['default_html_base_path'] = opcgui.config.default_html_base_path
 
     card_list = opencal.io.pkb.load_pkb(opcgui.config.pkb_path)
 
