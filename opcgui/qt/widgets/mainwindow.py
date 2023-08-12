@@ -8,6 +8,7 @@ from opencal.core.professor.ltm.celia import ProfessorCelia
 import opcgui
 from opcgui.qt.widgets.tabs.test import TestTab
 from opcgui.qt.widgets.tabs.add import AddCardsTab
+from opcgui.qt.widgets.tabs.edit import EditCardsTab
 from opcgui.qt.widgets.tabs.forwardtest import ForwardTestTab
 from opcgui.qt.widgets.tabs.review import ReviewTab
 from opcgui.qt.widgets.tabs.stats import StatsTab
@@ -59,6 +60,7 @@ class MainWindow(QMainWindow):
         # Add tabs
         self.daily_test_tab = TestTab(self.professor, self.context_directory, main_window=self, parent=self.tabs)
         self.add_cards_tab = AddCardsTab(self.card_list, self.context_directory, main_window=self, parent=self.tabs)
+        self.edit_cards_tab = EditCardsTab(self.card_list, self.context_directory, main_window=self, parent=self.tabs)
         self.forward_test_tab = ForwardTestTab(self.card_list, self.context_directory, main_window=self, parent=self.tabs)
         self.review_tab = ReviewTab(self.card_list, self.context_directory, main_window=self, parent=self.tabs)
         self.stats_tab = StatsTab(self.card_list, parent=self.tabs)
@@ -66,6 +68,7 @@ class MainWindow(QMainWindow):
 
         self.tabs.addTab(self.daily_test_tab, "Daily test")
         self.tabs.addTab(self.add_cards_tab, "Add Cards")
+        self.tabs.addTab(self.edit_cards_tab, "Edit Cards")
         self.tabs.addTab(self.forward_test_tab, "Forward test")
         self.tabs.addTab(self.review_tab, "Review")
         self.tabs.addTab(self.tags_tab, "Tags")
