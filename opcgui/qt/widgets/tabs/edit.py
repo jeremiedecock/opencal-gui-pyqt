@@ -51,6 +51,10 @@ class EditCardsTab(QWidget):
         self.search_widget.case_sensitive_checkbox.stateChanged.connect(self.update_callback)
         self.search_widget.show_hidden_cards_checkbox.stateChanged.connect(self.update_callback)
 
+        self.editor_widget.question_editor.editor.textChanged.connect(self.card_content_changed_callback)
+        self.editor_widget.answer_editor.editor.textChanged.connect(self.card_content_changed_callback)
+        self.editor_widget.tags_editor.editor.textChanged.connect(self.card_content_changed_callback)
+
         self.save_button.clicked.connect(self.save_btn_callback)
         self.cancel_button.clicked.connect(self.cancel_btn_callback)
 
@@ -125,9 +129,13 @@ class EditCardsTab(QWidget):
         self.search_widget.card_list_widget.clear()
         self.search_widget.card_list_widget.addItems([format_card(card) for card in self.current_card_list])
 
-        self.search_widget.tags_combo.clear()
-        search_tags_of_hidden_cards = show_hidden_cards or (selected_mode == "Hidden Cards")
-        self.search_widget.tags_combo.addItems([""] + opencal.core.tags.tag_list(self.current_card_list, count_hidden_cards=search_tags_of_hidden_cards, sort="asc"))
+        if selected_tag == "":
+            self.search_widget.tags_combo.clear()
+            search_tags_of_hidden_cards = show_hidden_cards or (selected_mode == "Hidden Cards")
+            self.search_widget.tags_combo.addItems([""] + opencal.core.tags.tag_list(self.current_card_list, count_hidden_cards=search_tags_of_hidden_cards, sort="asc"))
+
+        self.save_button.setEnabled(False)
+        self.cancel_button.setEnabled(False)
 
 
     def update_card_selection_callback(self, index):
@@ -136,6 +144,9 @@ class EditCardsTab(QWidget):
         self.editor_widget.answer_editor.text = card["answer"]
         self.editor_widget.tags_editor.text = "\n".join(card["tags"])
 
+        self.save_button.setEnabled(False)
+        self.cancel_button.setEnabled(False)
+
 
     def save_btn_callback(self):
         question_str = self.editor_widget.question_editor.text
@@ -143,8 +154,6 @@ class EditCardsTab(QWidget):
         tags_str = self.editor_widget.tags_editor.text
 
         if len(question_str.strip()) > 0 and len(tags_str.strip()):
-
-            pass  # TODO
 
         #     # Make the card and add it to the card list
         #     card = {
@@ -158,8 +167,39 @@ class EditCardsTab(QWidget):
 
         #     self.card_list.append(card)
 
+            self.save_button.setEnabled(False)
+            self.cancel_button.setEnabled(False)
+
 
     def cancel_btn_callback(self):
-        self.editor_widget.question_editor.text = ""  # TODO
-        self.editor_widget.answer_editor.text = ""    # TODO
-        self.editor_widget.tags_editor.text = ""      # TODO
+        index = self.search_widget.card_list_widget.currentRow()
+        if index != -1:
+            card = self.current_card_list[index]
+            self.editor_widget.question_editor.text = card["question"]
+            self.editor_widget.answer_editor.text = card["answer"]
+            self.editor_widget.tags_editor.text = "\n".join(card["tags"])
+
+            self.save_button.setEnabled(False)
+            self.cancel_button.setEnabled(False)
+
+
+    def card_content_changed_callback(self):
+        index = self.search_widget.card_list_widget.currentRow()
+
+        if index != -1:
+            card = self.current_card_list[index]
+
+            has_question_changed = self.editor_widget.question_editor.text.strip() != card["question"].strip()
+            has_answer_changed = self.editor_widget.answer_editor.text.strip() != card["answer"].strip()
+            has_tags_changed = self.editor_widget.tags_editor.text.strip() != "\n".join(card["tags"]).strip()
+
+            if has_question_changed or has_answer_changed or has_tags_changed:
+                self.save_button.setEnabled(True)
+                self.cancel_button.setEnabled(True)
+            else:
+                self.save_button.setEnabled(False)
+                self.cancel_button.setEnabled(False)
+
+        else:
+
+            assert("Internal error: card_content_changed_callback called without a selected card")
