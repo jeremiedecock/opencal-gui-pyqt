@@ -6,7 +6,7 @@ import datetime
 import qtme
 
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QSplitter, QPushButton
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QSplitter, QPushButton, QLabel
 
 from opcgui.qt.widgets.tagseditor import TagsEditor
 
@@ -23,17 +23,35 @@ class AddCardsTab(QWidget):
 
         self.splitter = QSplitter(orientation=Qt.Vertical, parent=self)
 
-        self.question_editor = qtme.widgets.QMultimediaEditor(parent=self, layout="stacked", html_scale=0.8, placeholder_text="Question", stacked_default_widget="editor")
-        self.answer_editor = qtme.widgets.QMultimediaEditor(parent=self, layout="stacked", html_scale=0.8, placeholder_text="Answer", stacked_default_widget="editor")
+        self.question_editor = qtme.widgets.QMultimediaEditor(parent=self, layout="stacked", html_scale=0.8, placeholder_text="Question", stacked_default_widget="editor", title="Question")
+        self.answer_editor = qtme.widgets.QMultimediaEditor(parent=self, layout="stacked", html_scale=0.8, placeholder_text="Answer", stacked_default_widget="editor", title="Answer")
         self.tags_editor = TagsEditor(self.card_list, parent=self)
 
-        self.tags_editor.setMaximumHeight(18 * 4)           # TODO: define height as 4 times the font height
+        self.tags_widget = QWidget(parent=self)
+        #self.tags_editor.setMaximumHeight(18 * 4)           # TODO: define height as 4 times the font height
+        self.tags_title_label = QLabel(parent=self, text="Tags")
+        font = self.tags_title_label.font()
+        font.setBold(True)
+        self.tags_title_label.setFont(font)
+        self.tags_vbox = QVBoxLayout(self.tags_widget)
+        self.tags_vbox.addWidget(self.tags_title_label)
+        self.tags_vbox.addWidget(self.tags_editor)
+        self.tags_widget.setLayout(self.tags_vbox)
 
         self.add_button = QPushButton('Add', self)
 
         self.splitter.addWidget(self.question_editor)
         self.splitter.addWidget(self.answer_editor)
-        self.splitter.addWidget(self.tags_editor)
+        self.splitter.addWidget(self.tags_widget)
+
+        # Define the default relative size of widgets in the splitter
+        # Warning: The setSizes() method is absolute not relative, it sets the sizes to actual pixel sizes;
+        #          the setStretchFactor() method is relative, it sets the sizes relative to each other.
+        # See https://stackoverflow.com/questions/29537762/pyqt-qsplitter-setsizes-usage
+        # See https://stackoverflow.com/questions/43831474/how-to-equally-distribute-the-width-of-qsplitter
+        self.splitter.setStretchFactor(0, 45)
+        self.splitter.setStretchFactor(1, 45)
+        self.splitter.setStretchFactor(2, 10)
         
         # Set slots #######################################
 
