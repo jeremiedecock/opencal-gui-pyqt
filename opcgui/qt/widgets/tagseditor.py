@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QPlainTextEdit
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QPlainTextEdit, QLabel, QCompleter
 
 class TagsEditor(QWidget):
 
@@ -10,27 +11,49 @@ class TagsEditor(QWidget):
 
         self.parent = parent
 
-        self.card_list = card_list
+        self.card_list = card_list              # this will be useful for auto-completion
         self.placeholder_text = placeholder_text
 
         # Make widgets ####################################
 
         self.editor = QPlainTextEdit()
-
         self.editor.setPlaceholderText(self.placeholder_text)
 
-        # TODO: setup auto-completion https://doc.qt.io/qt-5/qtwidgets-tools-customcompleter-example.html
+        self.title_label = QLabel(parent=self, text="Tags")
+        font = self.title_label.font()
+        font.setBold(True)
+        self.title_label.setFont(font)
+
+        # # Set completer ###################################
+        # # TODO: setup auto-completion https://doc.qt.io/qt-5/qtwidgets-tools-customcompleter-example.html
+
+        # completer = QCompleter(["one", "two", "three"], parent=self)
+        # completer.setCaseSensitivity(Qt.CaseInsensitive)
+        # self.editor.setCompleter(completer)
 
         # Make layouts ####################################
 
         vbox = QVBoxLayout(self)
 
-        vbox.setContentsMargins(0, 0, 0, 0)
+        #vbox.setContentsMargins(0, 0, 0, 0)
 
         # VBox
 
+        vbox.addWidget(self.title_label)
         vbox.addWidget(self.editor)
 
         # Set layouts #####################################
 
         self.setLayout(vbox)
+
+
+    @property
+    def text(self) -> str:
+        """
+        The text of the text edit as plain text.
+        """
+        return self.editor.toPlainText()
+
+    @text.setter
+    def text(self, new_text: str):
+        self.editor.setPlainText(new_text)

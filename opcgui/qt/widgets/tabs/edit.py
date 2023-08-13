@@ -27,23 +27,12 @@ class EditCardsTab(QWidget):
         self.answer_editor = qtme.widgets.QMultimediaEditor(parent=self, layout="stacked", html_scale=0.8, placeholder_text="Answer", stacked_default_widget="editor", title="Answer")
         self.tags_editor = TagsEditor(self.card_list, parent=self)
 
-        self.tags_widget = QWidget(parent=self)
-        #self.tags_editor.setMaximumHeight(18 * 4)           # TODO: define height as 4 times the font height
-        self.tags_title_label = QLabel(parent=self, text="Tags")
-        font = self.tags_title_label.font()
-        font.setBold(True)
-        self.tags_title_label.setFont(font)
-        self.tags_vbox = QVBoxLayout(self.tags_widget)
-        self.tags_vbox.addWidget(self.tags_title_label)
-        self.tags_vbox.addWidget(self.tags_editor)
-        self.tags_widget.setLayout(self.tags_vbox)
-
         self.save_button = QPushButton('Save', self)
         self.cancel_button = QPushButton('Cancel', self)
 
         self.splitter.addWidget(self.question_editor)
         self.splitter.addWidget(self.answer_editor)
-        self.splitter.addWidget(self.tags_widget)
+        self.splitter.addWidget(self.tags_editor)
 
         # Define the default relative size of widgets in the splitter
         # Warning: The setSizes() method is absolute not relative, it sets the sizes to actual pixel sizes;
@@ -75,11 +64,13 @@ class EditCardsTab(QWidget):
 
 
     def save_btn_callback(self):
-        question_str = self.question_editor.toPlainText()
-        answer_str = self.answer_editor.toPlainText()
-        tags_str = self.tags_editor.toPlainText()
+        question_str = self.question_editor.text
+        answer_str = self.answer_editor.text
+        tags_str = self.tags_editor.text
 
-        # if len(question_str.strip()) > 0 and len(tags_str.strip()):
+        if len(question_str.strip()) > 0 and len(tags_str.strip()):
+
+            pass  # TODO
 
         #     # Make the card and add it to the card list
         #     card = {
@@ -93,13 +84,8 @@ class EditCardsTab(QWidget):
 
         #     self.card_list.append(card)
 
-        #     # Erase editors
-        #     self.question_editor.setPlainText("")
-        #     self.answer_editor.setPlainText("")
-        #     self.tags_editor.setPlainText("")
-
 
     def cancel_btn_callback(self):
-        question_str = self.question_editor.toPlainText()
-        answer_str = self.answer_editor.toPlainText()
-        tags_str = self.tags_editor.toPlainText()
+        self.question_editor.text = ""  # TODO
+        self.answer_editor.text = ""    # TODO
+        self.tags_editor.text = ""      # TODO
