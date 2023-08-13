@@ -11,7 +11,7 @@ from opcgui.qt.widgets.tagseditor import TagsEditor
 
 class EditorWidget(QWidget):
 
-    def __init__(self, card_list, parent=None):
+    def __init__(self, card_list, stacked_default_widget="webview", parent=None):
         super().__init__(parent=parent)
 
         self.parent = parent
@@ -24,16 +24,16 @@ class EditorWidget(QWidget):
 
         self.question_editor = qtme.widgets.QMultimediaEditor(parent=self,
                                                               layout="stacked",
-                                                              html_scale=0.8,
+                                                              html_scale=1.,
                                                               placeholder_text="Question",
-                                                              stacked_default_widget="editor",
+                                                              stacked_default_widget=stacked_default_widget,
                                                               title="Question",
                                                               disable_markdown_by_default=True)
         self.answer_editor = qtme.widgets.QMultimediaEditor(parent=self,
                                                             layout="stacked",
-                                                            html_scale=0.8,
+                                                            html_scale=1.,
                                                             placeholder_text="Answer",
-                                                            stacked_default_widget="editor",
+                                                            stacked_default_widget=stacked_default_widget,
                                                             title="Answer",
                                                             disable_markdown_by_default=True)
         self.tags_editor = TagsEditor(self.card_list, parent=self)

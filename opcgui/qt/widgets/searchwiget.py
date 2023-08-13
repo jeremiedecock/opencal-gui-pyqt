@@ -14,12 +14,17 @@ class SearchWidget(QWidget):
         # Make widgets ####################################
 
         self.search_mode_combo = QComboBox(parent=self)
-        self.search_mode_combo.addItems(["All Cards", "Reviewed Cards", "New Cards", "Hidden Cards", "Cards by Tag"])
+        self.search_mode_combo.addItems([
+            "All Cards",
+            "Reviewed Cards",
+            "New Cards",
+            "Hidden Cards"
+        ])
         self.search_mode_combo.setCurrentIndex(1)
         self.search_mode_combo.currentIndexChanged.connect(self.update_search_mode)
 
         self.tags_combo = QComboBox(parent=self)
-        self.tags_combo.addItems(["Foo", "Bar", "Baz"])
+        self.tags_combo.addItems([""])
         self.tags_combo.setEditable(True)
         self.tags_combo.completer().setCompletionMode(QCompleter.PopupCompletion)
 
@@ -30,6 +35,8 @@ class SearchWidget(QWidget):
         self.show_hidden_cards_checkbox = QCheckBox("Show hidden cards", parent=self)
 
         self.card_list_widget = QListWidget(parent=self)
+        self.card_list_widget.setTextElideMode(Qt.ElideRight)                      # See https://stackoverflow.com/questions/69343830/not-eliding-correctly-on-qlistview-in-windows-os
+        self.card_list_widget.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)  # See https://stackoverflow.com/questions/69343830/not-eliding-correctly-on-qlistview-in-windows-os
 
         # Make layouts ####################################
 
@@ -56,20 +63,12 @@ class SearchWidget(QWidget):
         selected_mode = self.search_mode_combo.currentText()
 
         if selected_mode == "All Cards":
-            # self.tags_combo.setVisible(False)
-            self.tags_combo.hide()
             self.show_hidden_cards_checkbox.show()
         elif selected_mode == "Reviewed Cards":
-            self.tags_combo.hide()
             self.show_hidden_cards_checkbox.hide()
         elif selected_mode == "New Cards":
-            self.tags_combo.hide()
             self.show_hidden_cards_checkbox.hide()
         elif selected_mode == "Hidden Cards":
-            self.tags_combo.hide()
             self.show_hidden_cards_checkbox.hide()
-        elif selected_mode == "Cards by Tag":
-            self.tags_combo.show()
-            self.show_hidden_cards_checkbox.show()
         else:
             raise ValueError(f"Unknown search mode: {selected_mode}")

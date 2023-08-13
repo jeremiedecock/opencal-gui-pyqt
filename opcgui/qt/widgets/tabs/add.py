@@ -18,7 +18,7 @@ class AddCardsTab(QWidget):
 
         # Make widgets ####################################
 
-        self.editor_widget = EditorWidget(self.card_list, parent=self)
+        self.editor_widget = EditorWidget(self.card_list, stacked_default_widget="editor", parent=self)
 
         self.add_button = QPushButton('Add', self)
         

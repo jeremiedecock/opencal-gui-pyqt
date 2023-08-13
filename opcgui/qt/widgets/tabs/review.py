@@ -9,6 +9,7 @@ from opencal.core.professor.itm.arthur import ProfessorArthur
 from opencal.core.data import RIGHT_ANSWER_STR, WRONG_ANSWER_STR
 
 import opcgui
+import opcgui.utils
 
 from opcgui.qt.widgets.test import TestWidget
 
@@ -64,33 +65,12 @@ class ReviewTab(QWidget):
         selection_str = self.combo_selection.currentText()
 
         if selection_str == NEW_CARDS_STR:
-            self.current_card_list = [card for card in self.orig_card_list if datetime_to_date(card["cdate"]) == self.today]
+            self.current_card_list = [card for card in self.orig_card_list if opcgui.utils.has_been_created_today(card, today=self.today)]
         elif selection_str == WRONG_CARDS_STR:
-            self.current_card_list = [card for card in self.orig_card_list if has_been_reviewed_today(card, self.today)]
+            self.current_card_list = [card for card in self.orig_card_list if opcgui.utils.has_been_reviewed_today(card, wrong_answers_only=True, today=self.today)]
         else:
             raise ValueError("Unknown value " + selection_str)
 
         self.professor.update_card_list(self.current_card_list)
 
         self.test_widget.update_html()
-
-
-def has_been_reviewed_today(card, today, wrong_answers_only=True):
-    ret = False
-
-    if "reviews" in card.keys():
-        for review in card["reviews"]:
-            if (datetime_to_date(review["rdate"]) == today) and ((not wrong_answers_only) or (review["result"] == WRONG_ANSWER_STR)):
-                ret = True
-    
-    return ret
-
-
-def datetime_to_date(d):
-    '''If the object is an instance of datetime.datetime then convert it to a datetime.datetime.date object.
-
-    If it's already a date object, do nothing.'''
-
-    if isinstance(d, datetime.datetime):
-        d = d.date()
-    return d

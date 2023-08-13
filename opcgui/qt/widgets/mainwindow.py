@@ -55,6 +55,7 @@ class MainWindow(QMainWindow):
         # Make widgets ####################################
 
         self.tabs = QTabWidget(parent=self)
+        self.tabs.currentChanged.connect(self.update_tab)
         self.setCentralWidget(self.tabs)
 
         # Add tabs
@@ -136,6 +137,11 @@ class MainWindow(QMainWindow):
         # Show ############################################
 
         self.show()
+
+
+    def update_tab(self, index):
+        if hasattr(self.tabs.currentWidget(), "update_callback"):
+            self.tabs.currentWidget().update_callback()
 
 
     def get_webview_html_scale(self):
