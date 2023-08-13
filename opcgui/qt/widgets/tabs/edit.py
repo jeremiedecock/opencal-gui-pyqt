@@ -149,32 +149,28 @@ class EditCardsTab(QWidget):
 
 
     def save_btn_callback(self):
-        question_str = self.editor_widget.question_editor.text
-        answer_str = self.editor_widget.answer_editor.text
-        tags_str = self.editor_widget.tags_editor.text
+        index = self.search_widget.card_list_widget.currentRow()
 
-        if len(question_str.strip()) > 0 and len(tags_str.strip()):
+        if index != -1:
+            card = self.current_card_list[index]
 
-        #     # Make the card and add it to the card list
-        #     card = {
-        #             "cdate": datetime.date.today(),
-        #             "hidden": False,
-        #             "question": question_str,
-        #             "answer": answer_str,
-        #             "reviews": [],
-        #             "tags": [tag.strip() for tag in tags_str.split("\n") if tag.strip() != '']
-        #         }
-
-        #     self.card_list.append(card)
+            card["question"] = self.editor_widget.question_editor.text
+            card["answer"] = self.editor_widget.answer_editor.text
+            card["tags"] = self.editor_widget.tags_editor.text.split("\n")
 
             self.save_button.setEnabled(False)
             self.cancel_button.setEnabled(False)
 
+        else:
+            assert("Internal error: save_btn_callback called without a selected card")
+
 
     def cancel_btn_callback(self):
         index = self.search_widget.card_list_widget.currentRow()
+
         if index != -1:
             card = self.current_card_list[index]
+
             self.editor_widget.question_editor.text = card["question"]
             self.editor_widget.answer_editor.text = card["answer"]
             self.editor_widget.tags_editor.text = "\n".join(card["tags"])
@@ -189,11 +185,17 @@ class EditCardsTab(QWidget):
         if index != -1:
             card = self.current_card_list[index]
 
-            has_question_changed = self.editor_widget.question_editor.text.strip() != card["question"].strip()
-            has_answer_changed = self.editor_widget.answer_editor.text.strip() != card["answer"].strip()
-            has_tags_changed = self.editor_widget.tags_editor.text.strip() != "\n".join(card["tags"]).strip()
+            question_str = self.editor_widget.question_editor.text
+            answer_str = self.editor_widget.answer_editor.text
+            tags_str = self.editor_widget.tags_editor.text
 
-            if has_question_changed or has_answer_changed or has_tags_changed:
+            has_question_changed = question_str.strip() != card["question"].strip()
+            has_answer_changed = answer_str.strip() != card["answer"].strip()
+            has_tags_changed = tags_str.strip() != "\n".join(card["tags"]).strip()
+
+            is_content_valid = len(question_str.strip()) > 0 and len(tags_str.strip()) > 0
+
+            if (has_question_changed or has_answer_changed or has_tags_changed) and is_content_valid:
                 self.save_button.setEnabled(True)
                 self.cancel_button.setEnabled(True)
             else:
@@ -201,5 +203,4 @@ class EditCardsTab(QWidget):
                 self.cancel_button.setEnabled(False)
 
         else:
-
             assert("Internal error: card_content_changed_callback called without a selected card")

@@ -43,7 +43,7 @@ class AddCardsTab(QWidget):
         answer_str = self.editor_widget.answer_editor.text
         tags_str = self.editor_widget.tags_editor.text
 
-        if len(question_str.strip()) > 0 and len(tags_str.strip()):
+        if len(question_str.strip()) > 0 and len(tags_str.strip()) > 0:
 
             # Make the card and add it to the card list
             card = {
