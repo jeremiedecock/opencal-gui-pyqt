@@ -23,8 +23,20 @@ class AddCardsTab(QWidget):
 
         self.splitter = QSplitter(orientation=Qt.Vertical, parent=self)
 
-        self.question_editor = qtme.widgets.QMultimediaEditor(parent=self, layout="stacked", html_scale=0.8, placeholder_text="Question", stacked_default_widget="editor", title="Question")
-        self.answer_editor = qtme.widgets.QMultimediaEditor(parent=self, layout="stacked", html_scale=0.8, placeholder_text="Answer", stacked_default_widget="editor", title="Answer")
+        self.question_editor = qtme.widgets.QMultimediaEditor(parent=self,
+                                                              layout="stacked",
+                                                              html_scale=0.8,
+                                                              placeholder_text="Question",
+                                                              stacked_default_widget="editor",
+                                                              title="Question",
+                                                              disable_markdown_by_default=True)
+        self.answer_editor = qtme.widgets.QMultimediaEditor(parent=self,
+                                                            layout="stacked",
+                                                            html_scale=0.8,
+                                                            placeholder_text="Answer",
+                                                            stacked_default_widget="editor",
+                                                            title="Answer",
+                                                            disable_markdown_by_default=True)
         self.tags_editor = TagsEditor(self.card_list, parent=self)
 
         self.add_button = QPushButton('Add', self)
