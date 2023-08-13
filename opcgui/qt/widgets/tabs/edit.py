@@ -10,6 +10,8 @@ from opcgui.qt.widgets.editorwidget import EditorWidget
 import opcgui.utils
 from opcgui.utils import has_been_reviewed_today, has_been_created_today
 
+import opencal.core.tags
+
 
 class EditCardsTab(QWidget):
 
@@ -122,6 +124,10 @@ class EditCardsTab(QWidget):
 
         self.search_widget.card_list_widget.clear()
         self.search_widget.card_list_widget.addItems([format_card(card) for card in self.current_card_list])
+
+        self.search_widget.tags_combo.clear()
+        search_tags_of_hidden_cards = show_hidden_cards or (selected_mode == "Hidden Cards")
+        self.search_widget.tags_combo.addItems([""] + opencal.core.tags.tag_list(self.current_card_list, count_hidden_cards=search_tags_of_hidden_cards, sort="asc"))
 
 
     def update_card_selection_callback(self, index):
