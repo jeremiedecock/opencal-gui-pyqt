@@ -223,13 +223,18 @@ def replace_html_special_chars(src):
 
     return src
 
-IMG_SUB_PATTERN = r"&lt;img file=&quot;([0-9abcdef]{32}.(png|jpg|jpeg|gif))&quot; /&gt;"
+IMG_SUB_PATTERN = r"&lt;img file=&quot;([0-9abcdef]{32}.(png|jpg|jpeg|gif|webp|svg))&quot; /&gt;"
 AUDIO_SUB_PATTERN = r"&lt;audio file=&quot;([0-9abcdef]{32}.(ogg|oga|flac|spx|wav|mp3))&quot; /&gt;"
 VIDEO_SUB_PATTERN = r"&lt;video file=&quot;([0-9abcdef]{32}.(ogv|vp8|avi|mp4|mpg|wmv|mov))&quot; /&gt;"
 
-img_sub_regex = re.compile(IMG_SUB_PATTERN)       # TODO: put this in a class
+former_img_sub_regex = re.compile(IMG_SUB_PATTERN)       # TODO: put this in a class
 audio_sub_regex = re.compile(AUDIO_SUB_PATTERN)   # TODO: put this in a class
 video_sub_regex = re.compile(VIDEO_SUB_PATTERN)   # TODO: put this in a class
+
+# Extract the image file chedksum from a markdown image tag
+# E.g. the follwing input `![QHwJg](b73fa4df4c2ac186fb625e0af2ee80bc.png)` should capture `b73fa4df4c2ac186fb625e0af2ee80bc`
+NEW_IMG_SUB_PATTERN = r"!\[([^\]]*)\]\(([0-9abcdef]{32}.(png|jpg|jpeg|gif|webp|svg))\)"
+new_img_sub_regex = re.compile(NEW_IMG_SUB_PATTERN)
 
 def question_answer_to_html(question_or_answer):
 
@@ -237,7 +242,11 @@ def question_answer_to_html(question_or_answer):
 
     # Make html image tags
 
-    html = img_sub_regex.sub(r'<img src="materials/\1" />', html)
+    html = former_img_sub_regex.sub(r'<img src="materials/\1" />', html)
+
+    # Make html image tags from a markdown image tag
+
+    html = new_img_sub_regex.sub(r'<img src="materials/\2" />', html)
 
     # Make html audio tags
 
