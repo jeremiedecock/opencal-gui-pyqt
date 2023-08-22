@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import opencal
 from opencal.core.professor.ltm.alice import ProfessorAlice
 from opencal.core.professor.ltm.berenice import ProfessorBerenice
 from opencal.core.professor.ltm.celia import ProfessorCelia
@@ -17,6 +18,7 @@ from opcgui import APPLICATION_NAME
 
 import os
 import tempfile
+import warnings
 
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QAction
@@ -41,16 +43,25 @@ class MainWindow(QMainWindow):
 
         # Set Professor ###################################
 
-        if opcgui.config.ltm_professor == "alice":
+        ltm_professor_name = opencal.cfg["opencal"]["ltm_professor"]
+
+        professor_config = {}
+        professor_config.update(opencal.cfg["opencal"]["professors"]["common"])
+        try:
+            professor_config.update(opencal.cfg["opencal"]["professors"][ltm_professor_name])
+        except KeyError:
+            warnings.warn(f'No configuration found for professor "{ltm_professor_name}"')
+
+        if ltm_professor_name == "alice":
             self.professor = ProfessorAlice(self.card_list)
-        elif opcgui.config.ltm_professor == "berenice":
-            berenice_config = {key: value for key, value in opcgui.config.__dict__.items() if key in ("max_cards_per_grade", "tag_priority_dict", "tag_difficulty_dict", "reverse_level_0")}
-            self.professor = ProfessorBerenice(self.card_list, **berenice_config)
-        elif opcgui.config.ltm_professor == "celia":
-            celia_config = {key: value for key, value in opcgui.config.__dict__.items() if key in ("max_cards_per_grade", "tag_priority_dict", "tag_difficulty_dict", "reverse_level_0")}
-            self.professor = ProfessorCelia(self.card_list, **celia_config)
+        elif ltm_professor_name == "berenice":
+            professor_config = {key: value for key, value in professor_config.items() if key in ("max_cards_per_grade", "tag_priority_dict", "tag_difficulty_dict", "reverse_level_0")}
+            self.professor = ProfessorBerenice(self.card_list, **professor_config)
+        elif ltm_professor_name == "celia":
+            professor_config = {key: value for key, value in professor_config.items() if key in ("max_cards_per_grade", "tag_priority_dict", "tag_difficulty_dict", "reverse_level_0")}
+            self.professor = ProfessorCelia(self.card_list, **professor_config)
         else:
-            raise ValueError('Unknown professor "{}"'.format(opcgui.config.professor))
+            raise ValueError(f'Unknown professor "{ltm_professor_name}"')
 
         # Make widgets ####################################
 
@@ -82,14 +93,14 @@ class MainWindow(QMainWindow):
         # Mathjax
 
         # Install MathJax on Debian: "aptitude install libjs-mathjax"
-        mathjax_src_path = opcgui.config.mathjax_path
-        mathjax_dst_path = os.path.join(self.context_directory.name, "mathjax")
+        mathjax_src_path = opencal.cfg["opencal_ui"]["mathjax_path"]
+        mathjax_dst_path = os.path.join(self.context_directory.name, "mathjax")           # TODO!
         os.symlink(mathjax_src_path, mathjax_dst_path)
 
         # Cards media (images, audio and video files)
 
-        medias_src_path = os.path.expanduser(opcgui.config.pkb_medias_path)
-        medias_dst_path = os.path.join(self.context_directory.name, "materials")
+        medias_src_path = os.path.expanduser(opencal.cfg["opencal"]["db_assets_path"])
+        medias_dst_path = os.path.join(self.context_directory.name, "materials")          # TODO!
         os.symlink(medias_src_path, medias_dst_path)
 
         # Set the menu bar ################################
@@ -145,13 +156,16 @@ class MainWindow(QMainWindow):
 
 
     def get_webview_html_scale(self):
-        if hasattr(opcgui.config, "html_scale"):
-            return opcgui.config.html_scale
-        else:
-            return MEDIUM_SCALE
+        try:
+            html_scale = opencal.cfg["opencal_ui"]["html_scale"]
+        except KeyError:
+            html_scale = MEDIUM_SCALE
+
+        return html_scale
+
 
     def set_webview_html_scale(self, html_scale):
-        opcgui.config.html_scale = html_scale
+        opencal.cfg["opencal_ui"]["html_scale"] = html_scale
 
         for test_widget in (self.daily_test_tab, self.forward_test_tab.test_widget, self.review_tab.test_widget):
             test_widget.web_view.setZoomFactor(html_scale)

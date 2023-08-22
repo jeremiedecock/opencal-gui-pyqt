@@ -47,34 +47,34 @@ __all__ = ['config']
 
 # CONFIGURATION ###############################################################
 
-from dataclasses import dataclass
-import os
-import yaml
+# from dataclasses import dataclass
+# import os
+# import yaml
 
-# Dataclass: c.f. https://docs.python.org/3/library/dataclasses.html and https://stackoverflow.com/questions/31252939/changing-values-of-a-list-of-namedtuples/31253184
-@dataclass
-class Config:
-    pkb_path: str
-    pkb_medias_path: str
-    mathjax_path: str
-    html_scale: float
-    ltm_professor: str
-    stm_professor: str
-    active_list_increment_size: int
-    max_cards_per_grade: int
-    tag_priority_dict: dict
-    tag_difficulty_dict: dict
-    reverse_level_0: bool
-    default_html_base_path: str
+# # Dataclass: c.f. https://docs.python.org/3/library/dataclasses.html and https://stackoverflow.com/questions/31252939/changing-values-of-a-list-of-namedtuples/31253184
+# @dataclass
+# class Config:
+#     pkb_path: str
+#     pkb_medias_path: str
+#     mathjax_path: str
+#     html_scale: float
+#     ltm_professor: str
+#     stm_professor: str
+#     active_list_increment_size: int
+#     max_cards_per_grade: int
+#     tag_priority_dict: dict
+#     tag_difficulty_dict: dict
+#     reverse_level_0: bool
+#     default_html_base_path: str
 
-config = None       # The instance that contains the loaded configuration
+# config = None       # The instance that contains the loaded configuration
 
-def load_config_file(file_path="~/.opencal.yaml"):
-    global config
+# def load_config_file(file_path="~/.opencal.yaml"):
+#     global config
 
-    file_path = os.path.expanduser(file_path)  # to handle "~/..." paths
-    file_path = os.path.abspath(file_path)     # to handle relative paths
+#     file_path = os.path.expanduser(file_path)  # to handle "~/..." paths
+#     file_path = os.path.abspath(file_path)     # to handle relative paths
 
-    with open(file_path) as stream:
-        config_dict = yaml.safe_load(stream)
-        config = Config(**config_dict)
+#     with open(file_path) as stream:
+#         config_dict = yaml.safe_load(stream)
+#         config = Config(**config_dict)

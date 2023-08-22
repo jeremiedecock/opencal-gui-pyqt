@@ -7,6 +7,7 @@ ctypes.CDLL("libGL.so.1", mode=ctypes.RTLD_GLOBAL)
 
 import re
 
+import opencal
 from opencal.core.data import RIGHT_ANSWER_STR, WRONG_ANSWER_STR
 from opcgui.utils import datetime_to_date
 
@@ -663,14 +664,14 @@ class TestWidget(QWidget):
 
     def scroll_up_callback(self):
         current_scroll_y = self.web_view.page().scrollPosition().y()
-        fixed_current_scroll_y = current_scroll_y / opcgui.config.html_scale    # the current position have to be fixed taking into accout the zoom factor to avoid strange behavior... (bug in QWebViewEngine ?)
+        fixed_current_scroll_y = current_scroll_y / opencal.cfg["opencal_ui"]["html_scale"]    # the current position have to be fixed taking into accout the zoom factor to avoid strange behavior... (bug in QWebViewEngine ?)
         scroll_y = max(0, fixed_current_scroll_y - SCROLL_Y_STEP_SIZE_PX)
         self.set_scroll_position(y=scroll_y)
 
 
     def scroll_down_callback(self):
         current_scroll_y = self.web_view.page().scrollPosition().y()
-        fixed_current_scroll_y = current_scroll_y / opcgui.config.html_scale    # the current position have to be fixed taking into accout the zoom factor to avoid strange behavior... (bug in QWebViewEngine ?)
+        fixed_current_scroll_y = current_scroll_y / opencal.cfg["opencal_ui"]["html_scale"]    # the current position have to be fixed taking into accout the zoom factor to avoid strange behavior... (bug in QWebViewEngine ?)
         scroll_y = fixed_current_scroll_y + SCROLL_Y_STEP_SIZE_PX
         self.set_scroll_position(y=scroll_y)
 
