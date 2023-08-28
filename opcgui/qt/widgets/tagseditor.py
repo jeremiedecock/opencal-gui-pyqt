@@ -24,12 +24,15 @@ class TagsEditor(QWidget):
         font.setBold(True)
         self.title_label.setFont(font)
 
-        # # Set completer ###################################
-        # # TODO: setup auto-completion https://doc.qt.io/qt-5/qtwidgets-tools-customcompleter-example.html
+        # Set completer ##################################
 
-        # completer = QCompleter(["one", "two", "three"], parent=self)
-        # completer.setCaseSensitivity(Qt.CaseInsensitive)
-        # self.editor.setCompleter(completer)
+        # Setup the auto-completion for self.editor
+        # Remark: setCompleter() is not available for QPlainTextEdit; we have to implement it ourselves
+        #         see https://doc.qt.io/qt-5/qtwidgets-tools-customcompleter-example.html
+
+        #completer = QCompleter(["one", "two", "three"], parent=self)
+        #completer.setCaseSensitivity(Qt.CaseInsensitive)
+        #self.editor.setCompleter(completer)  # TODO: setCompleter() is not available for QPlainTextEdit
 
         # Make layouts ####################################
 

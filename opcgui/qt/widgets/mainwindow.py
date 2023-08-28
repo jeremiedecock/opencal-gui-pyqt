@@ -55,10 +55,10 @@ class MainWindow(QMainWindow):
         if ltm_professor_name == "alice":
             self.professor = ProfessorAlice(self.card_list)
         elif ltm_professor_name == "berenice":
-            professor_config = {key: value for key, value in professor_config.items() if key in ("max_cards_per_grade", "tag_priority_dict", "tag_difficulty_dict", "reverse_level_0")}
+            professor_config = {key: value for key, value in professor_config.items() if key in ("max_cards_per_grade", "tag_priorities", "tag_difficulties", "reverse_level_0")}
             self.professor = ProfessorBerenice(self.card_list, **professor_config)
         elif ltm_professor_name == "celia":
-            professor_config = {key: value for key, value in professor_config.items() if key in ("max_cards_per_grade", "tag_priority_dict", "tag_difficulty_dict", "reverse_level_0")}
+            professor_config = {key: value for key, value in professor_config.items() if key in ("max_cards_per_grade", "tag_priorities", "tag_difficulties")}
             self.professor = ProfessorCelia(self.card_list, **professor_config)
         else:
             raise ValueError(f'Unknown professor "{ltm_professor_name}"')
