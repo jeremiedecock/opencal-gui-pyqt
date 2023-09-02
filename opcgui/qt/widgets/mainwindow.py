@@ -5,6 +5,7 @@ import opencal
 from opencal.core.professor.ltm.alice import ProfessorAlice
 from opencal.core.professor.ltm.berenice import ProfessorBerenice
 from opencal.core.professor.ltm.celia import ProfessorCelia
+from opencal.core.professor.ltm.doreen import ProfessorDoreen
 
 import opcgui
 from opcgui.qt.widgets.tabs.test import TestTab
@@ -60,6 +61,9 @@ class MainWindow(QMainWindow):
         elif ltm_professor_name == "celia":
             professor_config = {key: value for key, value in professor_config.items() if key in ("max_cards_per_grade", "tag_priorities", "tag_difficulties")}
             self.professor = ProfessorCelia(self.card_list, **professor_config)
+        elif ltm_professor_name == "doreen":
+            professor_config = {key: value for key, value in professor_config.items() if key in ("max_cards_per_grade", "tag_priorities", "tag_difficulties", "priorities_per_level")}
+            self.professor = ProfessorDoreen(self.card_list, **professor_config)
         else:
             raise ValueError(f'Unknown professor "{ltm_professor_name}"')
 

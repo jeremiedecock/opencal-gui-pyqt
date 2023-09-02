@@ -25,7 +25,7 @@ class EditCardsTab(QWidget):
 
         self.horizontal_splitter = QSplitter(orientation=Qt.Horizontal, parent=self)
 
-        self.search_widget = SearchWidget(self.card_list, parent=self)
+        self.search_widget = SearchWidget(parent=self)
         self.editor_widget = EditorWidget(self.card_list, stacked_default_widget="webview", parent=self)
 
         self.horizontal_splitter.addWidget(self.search_widget)

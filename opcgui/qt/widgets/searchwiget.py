@@ -6,10 +6,8 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout, QLineEdit, QComboBox, QCheck
 
 class SearchWidget(QWidget):
 
-    def __init__(self, card_list, parent=None):
+    def __init__(self, parent=None):
         super().__init__(parent=parent)
-
-        self.card_list = card_list
 
         # Make widgets ####################################
 

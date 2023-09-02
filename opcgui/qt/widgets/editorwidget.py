@@ -36,7 +36,7 @@ class EditorWidget(QWidget):
                                                             stacked_default_widget=stacked_default_widget,
                                                             title="Answer",
                                                             disable_markdown_by_default=True)
-        self.tags_editor = TagsEditor(self.card_list, parent=self)
+        self.tags_editor = TagsEditor(card_list=self.card_list, parent=self)
 
         self.vertical_splitter.addWidget(self.question_editor)
         self.vertical_splitter.addWidget(self.answer_editor)
