@@ -21,25 +21,18 @@ requires-python = ">=3.8"
 version = "0.1.dev0"
 # web_site_url = "http://www.jdhp.org/software_en.html#opcgui"
 
+# See https://setuptools.pypa.io/en/latest/userguide/dependency_management.html#optional-dependencies
+#[project.optional-dependencies]
+#numba = ["numba"]
+
 [project.scripts]
 opencal = "opcgui.qt.main:main"
 
-[build-system]
-requires = [
-    'matplotlib',
-    'numpy',
-    'pandas',
-    'pyside6==6.2.2.1',
-    'pyyaml',
-    'scipy',
-    'seaborn',
-    'setuptools',
-    'stable-baselines3'
-]
-build-backend = "setuptools.build_meta"
-
+# See https://setuptools.pypa.io/en/latest/userguide/package_discovery.html
 [tool.setuptools]
-packages = ["opcgui"]
+packages = [
+    "opcgui",
+]
 
 # Use requirements.txt to setup dependencies (c.f. https://stackoverflow.com/a/73600610)
 [tool.setuptools.dynamic]

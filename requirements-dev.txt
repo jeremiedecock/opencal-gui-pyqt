@@ -1,5 +1,6 @@
 -r requirements-build.txt
 -e ../opencal-lib-python
+-e ../qt-multimedia-editor
 -e .
 #ipydatagrid
 ipython
