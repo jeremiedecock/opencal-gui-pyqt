@@ -13,8 +13,8 @@ import opencal.core.tags
 #     https://code.qt.io/cgit/qt/qtbase.git/tree/examples/widgets/tools/customcompleter?h=5.15
 class PlainTextEditWithCompleter(QPlainTextEdit):
 
-    def __init__(self, parent=None):
-        super().__init__(parent)
+    def __init__(self):
+        super().__init__()
 
         self.setPlaceholderText("Try to type name of planets in our Solar System.")
         self._completer = QCompleter(self)
@@ -79,11 +79,10 @@ class PlainTextEditWithCompleter(QPlainTextEdit):
 
 class TagsEditor(QWidget):
 
-    def __init__(self, card_list, parent=None, placeholder_text="Tags"):
-        super().__init__(parent=parent)
+    def __init__(self, card_list, placeholder_text="Tags"):
+        super().__init__()
 
         self.card_list = card_list
-        self.parent = parent
 
         self.placeholder_text = placeholder_text
 
@@ -96,7 +95,7 @@ class TagsEditor(QWidget):
         tag_list = [tag.lower() for tag in tag_list]   # The list of words to be autocompleted have to be lower case otherwise some strange things happen (some tags randomly disappear from the suggestion list)!
         self.editor.completer_model.setStringList(sorted(tag_list))  # The list of words to be autocompleted have to be sorted otherwise it won't work!
 
-        self.title_label = QLabel(parent=self, text="Tags")
+        self.title_label = QLabel(text="Tags")
         font = self.title_label.font()
         font.setBold(True)
         self.title_label.setFont(font)

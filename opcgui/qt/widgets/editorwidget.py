@@ -11,32 +11,28 @@ from opcgui.qt.widgets.tagseditor import TagsEditor
 
 class EditorWidget(QWidget):
 
-    def __init__(self, card_list, stacked_default_widget="webview", parent=None):
-        super().__init__(parent=parent)
-
-        self.parent = parent
+    def __init__(self, card_list, stacked_default_widget="webview"):
+        super().__init__()
 
         self.card_list = card_list              # this will be useful for auto-completion
 
         # Make widgets ####################################
 
-        self.vertical_splitter = QSplitter(orientation=Qt.Vertical, parent=self.parent)
+        self.vertical_splitter = QSplitter(orientation=Qt.Vertical)
 
-        self.question_editor = qtme.widgets.QMultimediaEditor(parent=self,
-                                                              layout="stacked",
+        self.question_editor = qtme.widgets.QMultimediaEditor(layout="stacked",
                                                               html_scale=1.,
                                                               placeholder_text="Question",
                                                               stacked_default_widget=stacked_default_widget,
                                                               title="Question",
                                                               disable_markdown_by_default=True)
-        self.answer_editor = qtme.widgets.QMultimediaEditor(parent=self,
-                                                            layout="stacked",
+        self.answer_editor = qtme.widgets.QMultimediaEditor(layout="stacked",
                                                             html_scale=1.,
                                                             placeholder_text="Answer",
                                                             stacked_default_widget=stacked_default_widget,
                                                             title="Answer",
                                                             disable_markdown_by_default=True)
-        self.tags_editor = TagsEditor(card_list=self.card_list, parent=self)
+        self.tags_editor = TagsEditor(card_list=self.card_list)
 
         self.vertical_splitter.addWidget(self.question_editor)
         self.vertical_splitter.addWidget(self.answer_editor)

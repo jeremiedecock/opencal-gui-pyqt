@@ -15,24 +15,24 @@ import opencal.core.tags
 
 class EditCardsTab(QWidget):
 
-    def __init__(self, card_list, main_window, parent):
-        super().__init__(parent=parent)
+    def __init__(self, card_list, main_window):
+        super().__init__()
 
         self.card_list = card_list
         self.current_card_list = []
 
         # Make widgets ####################################
 
-        self.horizontal_splitter = QSplitter(orientation=Qt.Horizontal, parent=self)
+        self.horizontal_splitter = QSplitter(orientation=Qt.Horizontal)
 
-        self.search_widget = SearchWidget(parent=self)
-        self.editor_widget = EditorWidget(self.card_list, stacked_default_widget="webview", parent=self)
+        self.search_widget = SearchWidget()
+        self.editor_widget = EditorWidget(self.card_list, stacked_default_widget="webview")
 
         self.horizontal_splitter.addWidget(self.search_widget)
         self.horizontal_splitter.addWidget(self.editor_widget)
 
-        self.save_button = QPushButton('Save', self)
-        self.cancel_button = QPushButton('Cancel', self)
+        self.save_button = QPushButton('Save')
+        self.cancel_button = QPushButton('Cancel')
 
         # Define the default relative size of widgets in the splitter
         # Warning: The setSizes() method is absolute not relative, it sets the sizes to actual pixel sizes;

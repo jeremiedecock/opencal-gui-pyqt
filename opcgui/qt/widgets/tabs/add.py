@@ -11,14 +11,14 @@ from opcgui.qt.widgets.editorwidget import EditorWidget
 class AddCardsTab(QWidget):
 
     def __init__(self, card_list, main_window, parent):
-        super().__init__(parent=parent)
+        super().__init__()
 
         self.card_list = card_list
         self.tabs = parent
 
         # Make widgets ####################################
 
-        self.editor_widget = EditorWidget(self.card_list, stacked_default_widget="editor", parent=self)
+        self.editor_widget = EditorWidget(self.card_list, stacked_default_widget="editor")
 
         self.add_button = QPushButton('Add', self)
         
@@ -60,4 +60,4 @@ class AddCardsTab(QWidget):
             # Erase editors
             self.editor_widget.question_editor.text = ""
             self.editor_widget.answer_editor.text = ""
-            self.editor_widget.tags_editor.text = ""
+            #self.editor_widget.tags_editor.text = ""

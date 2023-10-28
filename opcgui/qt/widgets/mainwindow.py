@@ -76,7 +76,7 @@ class MainWindow(QMainWindow):
         # Add tabs
         self.daily_test_tab = TestTab(self.professor, self.context_directory, main_window=self, parent=self.tabs)
         self.add_cards_tab = AddCardsTab(self.card_list, main_window=self, parent=self.tabs)
-        self.edit_cards_tab = EditCardsTab(self.card_list, main_window=self, parent=self.tabs)
+        self.edit_cards_tab = EditCardsTab(self.card_list, main_window=self)
         self.forward_test_tab = ForwardTestTab(self.card_list, self.context_directory, main_window=self, parent=self.tabs)
         self.review_tab = ReviewTab(self.card_list, self.context_directory, main_window=self, parent=self.tabs)
         self.stats_tab = StatsTab(self.card_list, parent=self.tabs)
