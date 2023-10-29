@@ -7,7 +7,7 @@ from opencal.core.tags import tag_list
 from opcgui.qt.widgets.test import TestWidget
 from opcgui.utils import datetime_to_date
 
-from PySide6.QtWidgets import QWidget, QComboBox, QLabel, QVBoxLayout, QLineEdit, QFormLayout, QCompleter, QSpinBox
+from PySide6.QtWidgets import QWidget, QComboBox, QLabel, QVBoxLayout, QLineEdit, QFormLayout, QCompleter, QSpinBox, QCheckBox
 
 import datetime
 
@@ -54,6 +54,10 @@ class ForwardTestTab(QWidget):
         #self.spinbox_null_period.setPlaceholderText("Minimum number of days since the last assessment")
         self.spinbox_null_period.valueChanged.connect(self.null_period_spinbox_callback)
 
+        self.checkbox_review_hidden_cards = QCheckBox()
+        self.checkbox_review_hidden_cards.setChecked(False)
+        self.checkbox_review_hidden_cards.stateChanged.connect(self.review_hidden_cards_callback)
+
         self.test_widget = TestWidget(professor=self.professor, context_directory=context_directory, main_window=main_window, parent=parent)
 
         # Make layouts ####################################
@@ -67,6 +71,7 @@ class ForwardTestTab(QWidget):
         filter_layout.addRow("Tag:", self.combo_tag_filter)
         filter_layout.addRow("Card level:", self.combo_card_level)
         filter_layout.addRow("Min. num. of days since the last assessment:", self.spinbox_null_period)
+        filter_layout.addRow("Review hidden cards too:", self.checkbox_review_hidden_cards)
 
         # VBox
 
@@ -96,6 +101,10 @@ class ForwardTestTab(QWidget):
     def null_period_spinbox_callback(self):
         self.update_selection_callback()
 
+    
+    def review_hidden_cards_callback(self):
+        self.update_selection_callback()
+
 
     def update_selection_callback(self):
         content_text = self.line_edit_contains_filter.text()
@@ -103,9 +112,10 @@ class ForwardTestTab(QWidget):
         card_level = self.combo_card_level.currentText()
         card_level = None if card_level == "" else int(card_level)
         null_period = self.spinbox_null_period.value()
+        review_hidden_cards = self.checkbox_review_hidden_cards.isChecked()
 
-        self.current_card_list = [card for card in self.ltm_card_list if review_card(card, selected_tag, content_text, null_period, card_level)]
-        self.professor.update_card_list(self.current_card_list)
+        self.current_card_list = [card for card in self.ltm_card_list if review_card(card, selected_tag, content_text, null_period, card_level, review_hidden_cards)]
+        self.professor.update_card_list(self.current_card_list, review_hidden_cards=review_hidden_cards)
 
         self.num_total_cards = len(self.current_card_list)
 
@@ -122,14 +132,14 @@ class ForwardTestTab(QWidget):
         self.num_remaining_cards_label.setText(REMAINING_CARDS_LABEL.format(num_reviewed_cards, num_remaining_cards, num_total_cards))
 
 
-def review_card(card, selected_tag, content_text, null_period, card_level, date_mock=None):
+def review_card(card, selected_tag, content_text, null_period, card_level, include_hidden_cards=False, date_mock=None):
 
     if date_mock is None:
         today = datetime.date.today()
     else:
         today = date_mock.today()
 
-    if card["hidden"]:
+    if card["hidden"] and (not include_hidden_cards):
         return False
 
     # If nothing has been selected, the selection is empty

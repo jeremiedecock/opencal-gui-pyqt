@@ -586,7 +586,7 @@ class TestWidget(QWidget):
 
             reviews_str = '\n'.join(['{} : {}'.format(datetime_to_date(review['rdate']).isoformat(), review['result']) for review in current_card["reviews"]])
 
-            grade = current_card['grade']
+            grade = current_card.get('grade', "-")
 
             if "priority" in current_card:
                 priority = current_card["priority"]
