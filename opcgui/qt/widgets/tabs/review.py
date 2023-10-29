@@ -6,6 +6,8 @@ import datetime
 import opencal
 from opencal.core.professor.itm.ralph import ProfessorRalph
 from opencal.core.professor.itm.randy import ProfessorRandy
+from opencal.core.professor.itm.denis import ProfessorDenis
+from opencal.core.professor.itm.ernest import ProfessorErnest
 from opencal.core.professor.itm.arthur import ProfessorArthur
 from opencal.core.data import RIGHT_ANSWER_STR, WRONG_ANSWER_STR
 
@@ -38,8 +40,14 @@ class ReviewTab(QWidget):
             self.professor = ProfessorRalph(self.current_card_list)
         elif stm_professor_name == "randy":
             self.professor = ProfessorRandy(self.current_card_list)
+        elif stm_professor_name == "denis":
+            self.professor = ProfessorDenis(self.current_card_list, opencal.cfg["opencal"]["professors"]["denis"]["cards_in_progress_increment_size"])
+        elif stm_professor_name == "ernest":
+            self.professor = ProfessorErnest(self.current_card_list, opencal.cfg["opencal"]["professors"]["ernest"]["cards_in_progress_increment_size"])
         elif stm_professor_name == "arthur":
-            self.professor = ProfessorArthur(self.current_card_list, opencal.cfg["opencal"]["professors"]["arthur"]["active_list_increment_size"])
+            self.professor = ProfessorArthur(self.current_card_list,
+                                             opencal.cfg["opencal"]["professors"]["arthur"]["cards_in_progress_increment_size"],
+                                             opencal.cfg["opencal"]["professors"]["arthur"]["right_answers_rate_threshold"])
         else:
             raise ValueError("Unknown STM professor", stm_professor_name)
 
@@ -68,9 +76,9 @@ class ReviewTab(QWidget):
         selection_str = self.combo_selection.currentText()
 
         if selection_str == NEW_CARDS_STR:
-            self.current_card_list = [card for card in self.orig_card_list if opcgui.utils.has_been_created_today(card, today=self.today)]
+            self.current_card_list = [card for card in self.orig_card_list if opcgui.utils.has_been_created_today(card, today=self.today) and not card["hidden"]]
         elif selection_str == WRONG_CARDS_STR:
-            self.current_card_list = [card for card in self.orig_card_list if opcgui.utils.has_been_reviewed_today(card, wrong_answers_only=True, today=self.today)]
+            self.current_card_list = [card for card in self.orig_card_list if opcgui.utils.has_been_reviewed_today(card, wrong_answers_only=True, today=self.today) and not card["hidden"]]
         else:
             raise ValueError("Unknown value " + selection_str)
 
