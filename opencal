@@ -22,12 +22,13 @@ else
 
     echo "opc-start,$(date --iso-8601='seconds')" >> ${LOG_PATH}  # TIME MG TIME TRACKER
 
-    OPC=$(python -c "import opcgui.qt.main ; print(opcgui.qt.main.__file__)")
+    #OPC=$(python -c "import opcgui.qt.main ; print(opcgui.qt.main.__file__)")
 
     # TODO: WORKAROUND https://forum.qt.io/topic/54802/linux-application-does-not-accept-keyboard-input/4
-    QT_XKB_CONFIG_ROOT=/usr/share/X11/xkb $OPC
+    #QT_XKB_CONFIG_ROOT=/usr/share/X11/xkb $OPC
 
-    #./opcgui/qt/main.py
+    # TODO: THE FOLLOWING LINE IS A WORKAROUND ; DON'T COMMIT THAT!
+    ~/git/pub/jdhp/opencal-gui-pyqt/env/bin/opencal ./opcgui/qt/main.py
 
     echo "opc-stop,$(date --iso-8601='seconds')" >> ${LOG_PATH}  # TIME MG TIME TRACKER
 
