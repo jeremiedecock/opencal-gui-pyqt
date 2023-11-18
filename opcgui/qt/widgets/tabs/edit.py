@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QSplitter, QPushButton
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QSplitter, QPushButton, QMenu
+from PySide6.QtGui import QAction
 
 from opcgui.qt.widgets.searchwiget import SearchWidget
 from opcgui.qt.widgets.editorwidget import EditorWidget
@@ -26,6 +27,11 @@ class EditCardsTab(QWidget):
         self.horizontal_splitter = QSplitter(orientation=Qt.Horizontal)
 
         self.search_widget = SearchWidget()
+
+        # Add a menu to the card list widget
+        self.search_widget.card_list_widget.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.search_widget.card_list_widget.customContextMenuRequested.connect(self.card_list_widget_context_menu_callback)
+
         self.editor_widget = EditorWidget(self.card_list, stacked_default_widget="webview")
 
         self.horizontal_splitter.addWidget(self.search_widget)
@@ -204,3 +210,37 @@ class EditCardsTab(QWidget):
 
         else:
             assert("Internal error: card_content_changed_callback called without a selected card")
+
+
+    def card_list_widget_context_menu_callback(self, position):
+        contextMenu = QMenu(self)
+
+        hide_action = QAction("Hide", self)
+        hide_action.triggered.connect(self.hide_selected_cards_callback)
+        contextMenu.addAction(hide_action)
+
+        unhide_action = QAction("Unhide", self)
+        unhide_action.triggered.connect(self.unhide_selected_cards_callback)
+        contextMenu.addAction(unhide_action)
+
+        contextMenu.exec_(self.search_widget.card_list_widget.mapToGlobal(position))
+
+
+    def hide_selected_cards_callback(self):
+        index = self.search_widget.card_list_widget.currentRow()
+        card = self.current_card_list[index]
+        card['hidden'] = True
+        self.update_callback()
+
+        # select the index row in self.search_widget or the last row if index is out of range
+        self.search_widget.card_list_widget.setCurrentRow(min(index, self.search_widget.card_list_widget.count() - 1))
+
+
+    def unhide_selected_cards_callback(self):
+        index = self.search_widget.card_list_widget.currentRow()
+        card = self.current_card_list[index]
+        card['hidden'] = False
+        self.update_callback()
+
+        # select the index row in self.search_widget or the last row if index is out of range
+        self.search_widget.card_list_widget.setCurrentRow(min(index, self.search_widget.card_list_widget.count() - 1))
