@@ -81,6 +81,13 @@ Example usage
 TODO
 
 
+Troublshooting
+==============
+
+https://forum.qt.io/topic/93247/qt-qpa-plugin-could-not-load-the-qt-platform-plugin-xcb-in-even-though-it-was-found/16
+apt install libxcb-cursor0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-render-util0 
+
+
 Bug reports
 ===========
 
