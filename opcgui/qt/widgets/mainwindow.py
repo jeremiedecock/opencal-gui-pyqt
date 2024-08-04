@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import opencal
-from opencal.core.professor.ltm.alice import ProfessorAlice
-from opencal.core.professor.ltm.berenice import ProfessorBerenice
-from opencal.core.professor.ltm.celia import ProfessorCelia
-from opencal.core.professor.ltm.doreen import ProfessorDoreen
+from opencal.core.professor.consolidation.alice import ProfessorAlice
+from opencal.core.professor.consolidation.berenice import ProfessorBerenice
+from opencal.core.professor.consolidation.celia import ProfessorCelia
+from opencal.core.professor.consolidation.doreen import ProfessorDoreen
 
 import opcgui
 from opcgui.qt.widgets.tabs.test import TestTab
@@ -44,28 +44,28 @@ class MainWindow(QMainWindow):
 
         # Set Professor ###################################
 
-        ltm_professor_name = opencal.cfg["opencal"]["ltm_professor"]
+        consolidation_professor_name = opencal.cfg["opencal"]["consolidation_professor"]
 
         professor_config = {}
         professor_config.update(opencal.cfg["opencal"]["professors"]["common"])
         try:
-            professor_config.update(opencal.cfg["opencal"]["professors"][ltm_professor_name])
+            professor_config.update(opencal.cfg["opencal"]["professors"][consolidation_professor_name])
         except KeyError:
-            warnings.warn(f'No configuration found for professor "{ltm_professor_name}"')
+            warnings.warn(f'No configuration found for professor "{consolidation_professor_name}"')
 
-        if ltm_professor_name == "alice":
+        if consolidation_professor_name == "alice":
             self.professor = ProfessorAlice(self.card_list)
-        elif ltm_professor_name == "berenice":
+        elif consolidation_professor_name == "berenice":
             professor_config = {key: value for key, value in professor_config.items() if key in ("max_cards_per_grade", "tag_priorities", "tag_difficulties", "reverse_level_0")}
             self.professor = ProfessorBerenice(self.card_list, **professor_config)
-        elif ltm_professor_name == "celia":
+        elif consolidation_professor_name == "celia":
             professor_config = {key: value for key, value in professor_config.items() if key in ("max_cards_per_grade", "tag_priorities", "tag_difficulties")}
             self.professor = ProfessorCelia(self.card_list, **professor_config)
-        elif ltm_professor_name == "doreen":
+        elif consolidation_professor_name == "doreen":
             professor_config = {key: value for key, value in professor_config.items() if key in ("max_cards_per_grade", "tag_priorities", "tag_difficulties", "priorities_per_level")}
             self.professor = ProfessorDoreen(self.card_list, **professor_config)
         else:
-            raise ValueError(f'Unknown professor "{ltm_professor_name}"')
+            raise ValueError(f'Unknown professor "{consolidation_professor_name}"')
 
         # Make widgets ####################################
 
@@ -82,11 +82,11 @@ class MainWindow(QMainWindow):
         self.stats_tab = StatsTab(self.card_list, parent=self.tabs)
         self.tags_tab = TagsTab(self.card_list, parent=self.tabs)
 
-        self.tabs.addTab(self.daily_test_tab, "Daily test")
+        self.tabs.addTab(self.daily_test_tab, "Daily test (consolidation)")
         self.tabs.addTab(self.add_cards_tab, "Add Cards")
         self.tabs.addTab(self.edit_cards_tab, "Edit Cards")
-        self.tabs.addTab(self.forward_test_tab, "Forward test")
-        self.tabs.addTab(self.review_tab, "Review")
+        self.tabs.addTab(self.forward_test_tab, "Forward test (consolidation)")
+        self.tabs.addTab(self.review_tab, "Review (acquisition)")
         self.tabs.addTab(self.tags_tab, "Tags")
         self.tabs.addTab(self.stats_tab, "Stats")
 

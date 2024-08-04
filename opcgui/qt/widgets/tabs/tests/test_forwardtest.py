@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-This module contains unit tests for the "opencal.core.professor.ltm.berenice" module.
+This module contains unit tests for the "opencal.core.professor.consolidation.berenice" module.
 """
 
 from opcgui.qt.widgets.tabs.forwardtest import review_card

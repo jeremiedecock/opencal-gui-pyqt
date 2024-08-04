@@ -57,7 +57,7 @@ class TagsTab(QWidget):
 
         self.tabs = parent
 
-        self.ltm_card_list = card_list
+        self.consolidation_card_list = card_list
 
         max_grade = max([card["grade"] for card in card_list if "grade" in card])
 
@@ -99,7 +99,7 @@ class TagsTab(QWidget):
 
         # Set data (tags) ##############
 
-        #self.tags_table_model.tag_list = opencal.core.tags.tag_list_count(self.ltm_card_list, count_hidden_cards=False)
+        #self.tags_table_model.tag_list = opencal.core.tags.tag_list_count(self.consolidation_card_list, count_hidden_cards=False)
         count_hidden_cards = False
         tag_dict = {}
         for card in card_list:

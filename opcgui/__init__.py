@@ -58,8 +58,8 @@ __all__ = ['config']
 #     pkb_medias_path: str
 #     mathjax_path: str
 #     html_scale: float
-#     ltm_professor: str
-#     stm_professor: str
+#     consolidation_professor: str
+#     acquisition_professor: str
 #     active_list_increment_size: int
 #     max_cards_per_grade: int
 #     tag_priority_dict: dict

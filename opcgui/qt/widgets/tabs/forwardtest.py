@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from opencal.core.professor.ltm.brutus import ProfessorBrutus
+from opencal.core.professor.consolidation.brutus import ProfessorBrutus
 from opencal.core.tags import tag_list
 
 from opcgui.qt.widgets.test import TestWidget
@@ -20,11 +20,11 @@ class ForwardTestTab(QWidget):
 
         max_grade = max([card["grade"] for card in card_list if "grade" in card])
 
-        self.ltm_card_list = card_list
+        self.consolidation_card_list = card_list
         self.current_card_list = []
         self.num_total_cards = 0
 
-        self.tags = [""] + tag_list(self.ltm_card_list, sort="asc")
+        self.tags = [""] + tag_list(self.consolidation_card_list, sort="asc")
 
         self.professor = ProfessorBrutus(self.current_card_list)
         self.professor.add_reply_observer(self)
@@ -114,7 +114,7 @@ class ForwardTestTab(QWidget):
         null_period = self.spinbox_null_period.value()
         review_hidden_cards = self.checkbox_review_hidden_cards.isChecked()
 
-        self.current_card_list = [card for card in self.ltm_card_list if review_card(card, selected_tag, content_text, null_period, card_level, review_hidden_cards)]
+        self.current_card_list = [card for card in self.consolidation_card_list if review_card(card, selected_tag, content_text, null_period, card_level, review_hidden_cards)]
         self.professor.update_card_list(self.current_card_list, review_hidden_cards=review_hidden_cards)
 
         self.num_total_cards = len(self.current_card_list)

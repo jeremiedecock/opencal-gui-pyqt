@@ -18,7 +18,7 @@ dynamic = ["dependencies"]
 name = "opcgui"
 readme = "README.rst"
 requires-python = ">=3.8"
-version = "0.1.dev0"
+version = "0.3.0"
 # web_site_url = "http://www.jdhp.org/software_en.html#opcgui"
 
 # See https://setuptools.pypa.io/en/latest/userguide/dependency_management.html#optional-dependencies

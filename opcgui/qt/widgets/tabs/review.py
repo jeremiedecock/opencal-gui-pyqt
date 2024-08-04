@@ -4,11 +4,11 @@
 import datetime
 
 import opencal
-from opencal.core.professor.itm.ralph import ProfessorRalph
-from opencal.core.professor.itm.randy import ProfessorRandy
-from opencal.core.professor.itm.denis import ProfessorDenis
-from opencal.core.professor.itm.ernest import ProfessorErnest
-from opencal.core.professor.itm.arthur import ProfessorArthur
+from opencal.core.professor.acquisition.ralph import ProfessorRalph
+from opencal.core.professor.acquisition.randy import ProfessorRandy
+from opencal.core.professor.acquisition.denis import ProfessorDenis
+from opencal.core.professor.acquisition.ernest import ProfessorErnest
+from opencal.core.professor.acquisition.arthur import ProfessorArthur
 from opencal.core.data import RIGHT_ANSWER_STR, WRONG_ANSWER_STR
 
 import opcgui
@@ -34,22 +34,22 @@ class ReviewTab(QWidget):
         self.orig_card_list = card_list
         self.current_card_list = []
 
-        stm_professor_name = opencal.cfg["opencal"]["stm_professor"].lower()
+        acquisition_professor_name = opencal.cfg["opencal"]["acquisition_professor"].lower()
 
-        if stm_professor_name == "ralf":
+        if acquisition_professor_name == "ralf":
             self.professor = ProfessorRalph(self.current_card_list)
-        elif stm_professor_name == "randy":
+        elif acquisition_professor_name == "randy":
             self.professor = ProfessorRandy(self.current_card_list)
-        elif stm_professor_name == "denis":
+        elif acquisition_professor_name == "denis":
             self.professor = ProfessorDenis(self.current_card_list, opencal.cfg["opencal"]["professors"]["denis"]["cards_in_progress_increment_size"])
-        elif stm_professor_name == "ernest":
+        elif acquisition_professor_name == "ernest":
             self.professor = ProfessorErnest(self.current_card_list, opencal.cfg["opencal"]["professors"]["ernest"]["cards_in_progress_increment_size"])
-        elif stm_professor_name == "arthur":
+        elif acquisition_professor_name == "arthur":
             self.professor = ProfessorArthur(self.current_card_list,
                                              opencal.cfg["opencal"]["professors"]["arthur"]["cards_in_progress_increment_size"],
                                              opencal.cfg["opencal"]["professors"]["arthur"]["right_answers_rate_threshold"])
         else:
-            raise ValueError("Unknown STM professor", stm_professor_name)
+            raise ValueError("Unknown acquisition professor", acquisition_professor_name)
 
         # Make widgets ####################################
 
