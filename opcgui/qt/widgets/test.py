@@ -6,6 +6,7 @@ import ctypes
 ctypes.CDLL("libGL.so.1", mode=ctypes.RTLD_GLOBAL)
 
 import re
+import time
 
 import opencal
 from opencal.core.data import RIGHT_ANSWER_STR, WRONG_ANSWER_STR
@@ -275,6 +276,9 @@ class TestWidget(QWidget):
         self.main_window = main_window
 
         self.show_answer = False
+
+        self.user_response_start_time = None
+        self.user_response_end_time = None
 
         # Make widgets ####################################
 
@@ -580,6 +584,10 @@ class TestWidget(QWidget):
         current_card = self.professor.current_card
         self.show_answer = show_answer
 
+        if show_answer:
+            # We stop the timer when the answer is shown (we stop the timer before the HTML loading of the answer starts)
+            self.user_response_end_time = time.time()
+
         if current_card is not None:
 
             # Informations
@@ -656,6 +664,10 @@ class TestWidget(QWidget):
 
         self.web_view.setHtml(html, self.base_url)
 
+        if not show_answer:
+            # We start the timer when a new question is shown (we wait the end of the HTML loading to start the timer)
+            self.user_response_start_time = time.time()
+
 
 
     def set_scroll_position(self, x=0, y=0):
@@ -676,6 +688,16 @@ class TestWidget(QWidget):
         self.set_scroll_position(y=scroll_y)
 
 
+    def _get_user_response_time_ms(self):
+        # Calculate the user's response time in milliseconds and round to the nearest integer
+        user_response_time_ms = None
+
+        if (self.user_response_start_time is not None) and (self.user_response_end_time is not None):
+            user_response_time_ms = round((self.user_response_end_time - self.user_response_start_time) * 1000)
+
+        return user_response_time_ms
+
+
     def answer_btn_callback(self):
         if self.stack_layout.currentWidget() == self.navigation_widget:
             self.stack_layout.setCurrentWidget(self.answer_widget)
@@ -683,25 +705,29 @@ class TestWidget(QWidget):
 
     def skip_card_btn_callback(self):
         if self.stack_layout.currentWidget() == self.navigation_widget:
-            self.professor.current_card_reply(answer="skip", duration=None, confidence=None)
+            user_response_time_ms = self._get_user_response_time_ms()
+            self.professor.current_card_reply(answer="skip", user_response_time_ms=user_response_time_ms, confidence=None)
             self.update_html(show_answer=False)
             self.main_window.statusBar().showMessage("Skip", 2000)
 
     def skip_level_callback(self):
         if self.stack_layout.currentWidget() == self.navigation_widget:
-            self.professor.current_card_reply(answer="skip level", duration=None, confidence=None)
+            user_response_time_ms = self._get_user_response_time_ms()
+            self.professor.current_card_reply(answer="skip level", user_response_time_ms=user_response_time_ms, confidence=None)
             self.update_html(show_answer=False)
             self.main_window.statusBar().showMessage("Skip level", 2000)
 
     def hide_card_btn_callback(self):
         if self.stack_layout.currentWidget() == self.navigation_widget:
-            self.professor.current_card_reply(answer="skip", hide=True, duration=None, confidence=None)
+            user_response_time_ms = self._get_user_response_time_ms()
+            self.professor.current_card_reply(answer="skip", hide=True, user_response_time_ms=user_response_time_ms, confidence=None)
             self.update_html(show_answer=False)
             self.main_window.statusBar().showMessage("Hide", 2000)
 
     def right_answer_btn_callback(self, hide=False):
         if self.stack_layout.currentWidget() == self.answer_widget:
-            self.professor.current_card_reply(answer=RIGHT_ANSWER_STR, hide=hide, duration=None, confidence=None)
+            user_response_time_ms = self._get_user_response_time_ms()
+            self.professor.current_card_reply(answer=RIGHT_ANSWER_STR, hide=hide, user_response_time_ms=user_response_time_ms, confidence=None)
             self.stack_layout.setCurrentWidget(self.navigation_widget)
             self.update_html(show_answer=False, feedback="right")
             if hide:
@@ -711,7 +737,8 @@ class TestWidget(QWidget):
 
     def wrong_answer_btn_callback(self, hide=False):
         if self.stack_layout.currentWidget() == self.answer_widget:
-            self.professor.current_card_reply(answer=WRONG_ANSWER_STR, hide=hide, duration=None, confidence=None)
+            user_response_time_ms = self._get_user_response_time_ms()
+            self.professor.current_card_reply(answer=WRONG_ANSWER_STR, hide=hide, user_response_time_ms=user_response_time_ms, confidence=None)
             self.stack_layout.setCurrentWidget(self.navigation_widget)
             self.update_html(show_answer=False, feedback="wrong")
             if hide:
