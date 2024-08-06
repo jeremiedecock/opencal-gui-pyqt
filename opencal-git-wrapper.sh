@@ -3,6 +3,10 @@
 DATA_GIT_PATH=~/data_opencal
 LAUNCH_SCRIPT_PATH=~/bin/opencal
 LOG_PATH=~/data_opencal/timemg-opc.csv  # TIME MG TIME TRACKER
+BACKUP_SCRIPT_PATH=~/bin/opencal-backup
+DUMP_SCRIPT_PATH=~/bin/opencal-dump
+RESTORE_SCRIPT_PATH=~/bin/opencal-restore
+XML_TO_SQLITE_SCRIPT_PATH=~/bin/opencal-xml-to-sqlite
 
 echo ""
 echo "Shortkeys:"
@@ -37,14 +41,23 @@ else
         zenity --error --title="Git Pull Error" --text="$(cat git_error.txt)"
         rm git_error.txt
     else
+        # Make the SQLite database from the fetched opencal.sql file
+        ${RESTORE_SCRIPT_PATH}
+
         echo ""
         echo "opc-start,$(date --iso-8601='seconds')" >> ${LOG_PATH}  # TIME MG TIME TRACKER
-        
+
         # If git pull succeeds, execute the launch script
         ${LAUNCH_SCRIPT_PATH}
 
         echo "opc-stop,$(date --iso-8601='seconds')" >> ${LOG_PATH}  # TIME MG TIME TRACKER
         echo ""
+
+        # Execute the backup and dump scripts
+        #${XML_TO_SQLITE_SCRIPT_PATH}          # This is commented out because consolidation reviews have a different ID at each import then git diffs are always huge
+        ${BACKUP_SCRIPT_PATH}
+        ${DUMP_SCRIPT_PATH}
+        xz -vv --force ${DATA_GIT_PATH}/*_opencal.sqlite
 
         # Try to pull the latest changes from the git repository
         git -C ${DATA_GIT_PATH} status
@@ -56,7 +69,7 @@ else
         if zenity --question --title="Git Push" --text="Do you want to push changes to the remote repository?"
         then
             # If user's answer is positive, commit changes and push to the origin remote repository
-            git -C ${DATA_GIT_PATH} add .
+            git -C ${DATA_GIT_PATH} add jeremie.pkb opencal_config.yml opencal.sql timemg-opc.csv assets/*
             git -C ${DATA_GIT_PATH} commit -m "Up."
             git -C ${DATA_GIT_PATH} push
         fi
