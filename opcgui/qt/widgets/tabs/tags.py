@@ -59,7 +59,7 @@ class TagsTab(QWidget):
 
         self.consolidation_card_list = card_list
 
-        max_grade = max([card["grade"] for card in card_list if "grade" in card])
+        max_grade = max([card.grade for card in card_list if card.grade is not None])
 
         #self.edit = QPlainTextEdit()
 
@@ -104,7 +104,7 @@ class TagsTab(QWidget):
         tag_dict = {}
         for card in card_list:
             if not card["hidden"] or count_hidden_cards:
-                grade = card["grade"] if "grade" in card else None   # Hidden cards don't have a grade by default (to speedup startup)
+                grade = card.grade if (card.grade is not None) else None   # Hidden cards don't have a grade by default (to speedup startup)
                 for tag in card["tags"]:
 
                     if tag not in tag_dict:

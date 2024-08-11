@@ -18,7 +18,7 @@ class ForwardTestTab(QWidget):
     def __init__(self, card_list, context_directory, main_window, parent=None):
         super().__init__(parent=parent)
 
-        max_grade = max([card["grade"] for card in card_list if "grade" in card])
+        max_grade = max([card.grade for card in card_list if card.grade is not None])
 
         self.consolidation_card_list = card_list
         self.current_card_list = []

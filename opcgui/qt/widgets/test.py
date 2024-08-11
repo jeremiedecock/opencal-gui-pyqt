@@ -594,17 +594,9 @@ class TestWidget(QWidget):
 
             reviews_str = '\n'.join(['{} : {}'.format(datetime_to_date(review['rdate']).isoformat(), review['result']) for review in current_card["reviews"]])
 
-            grade = current_card.get('grade', "-")
-
-            if "priority" in current_card:
-                priority = current_card["priority"]
-            else:
-                priority = "n.c."
-            
-            if "difficulty" in current_card:
-                difficulty = current_card["difficulty"]
-            else:
-                difficulty = "n.c."
+            grade = current_card.grade if current_card.grade is not None else "-"
+            priority = current_card.priority if current_card.priority is not None else "n.c."
+            difficulty = current_card.difficulty if current_card.difficulty is not None else "n.c."
 
             html_body = INFORMATION.format(datetime_to_date(current_card["cdate"]).isoformat(),
                                            reviews_str,

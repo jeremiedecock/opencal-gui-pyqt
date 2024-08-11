@@ -79,8 +79,8 @@ class MainWindow(QMainWindow):
         self.edit_cards_tab = EditCardsTab(self.card_list, main_window=self)
         self.forward_test_tab = ForwardTestTab(self.card_list, self.context_directory, main_window=self, parent=self.tabs)
         self.review_tab = ReviewTab(self.card_list, self.context_directory, main_window=self, parent=self.tabs)
-        self.stats_tab = StatsTab(self.card_list, parent=self.tabs)
         self.tags_tab = TagsTab(self.card_list, parent=self.tabs)
+        # self.stats_tab = StatsTab(self.card_list, parent=self.tabs)
 
         self.tabs.addTab(self.daily_test_tab, "Daily test (consolidation)")
         self.tabs.addTab(self.add_cards_tab, "Add Cards")
@@ -88,7 +88,7 @@ class MainWindow(QMainWindow):
         self.tabs.addTab(self.forward_test_tab, "Forward test (consolidation)")
         self.tabs.addTab(self.review_tab, "Review (acquisition)")
         self.tabs.addTab(self.tags_tab, "Tags")
-        self.tabs.addTab(self.stats_tab, "Stats")
+        # self.tabs.addTab(self.stats_tab, "Stats")
 
         # Make the context directory ######################
 
