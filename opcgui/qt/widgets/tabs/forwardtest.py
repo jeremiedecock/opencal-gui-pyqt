@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from opencal.card import Card
 from opencal.core.professor.consolidation.brutus import ProfessorBrutus
 from opencal.core.tags import tag_list
 
@@ -10,12 +11,19 @@ from opcgui.utils import datetime_to_date
 from PySide6.QtWidgets import QWidget, QComboBox, QLabel, QVBoxLayout, QLineEdit, QFormLayout, QCompleter, QSpinBox, QCheckBox
 
 import datetime
+from typing import Any, Dict, List, Optional
 
 REMAINING_CARDS_LABEL = "Reviewed or skipped cards: {}     Remaining: {} / {}"
 
 class ForwardTestTab(QWidget):
 
-    def __init__(self, card_list, context_directory, main_window, parent=None):
+    def __init__(
+            self,
+            card_list: List[Card],
+            context_directory,
+            main_window,
+            parent=None
+        ):
         super().__init__(parent=parent)
 
         max_grade = max([card.grade for card in card_list if card.grade is not None])
@@ -132,39 +140,47 @@ class ForwardTestTab(QWidget):
         self.num_remaining_cards_label.setText(REMAINING_CARDS_LABEL.format(num_reviewed_cards, num_remaining_cards, num_total_cards))
 
 
-def review_card(card, selected_tag, content_text, null_period, card_level, include_hidden_cards=False, date_mock=None):
+def review_card(
+        card: Card,
+        selected_tag,
+        content_text,
+        null_period,
+        card_level,
+        include_hidden_cards=False,
+        date_mock=None
+    ):
 
     if date_mock is None:
         today = datetime.date.today()
     else:
         today = date_mock.today()
 
-    if card["hidden"] and (not include_hidden_cards):
+    if card.is_hidden and (not include_hidden_cards):
         return False
 
     # If nothing has been selected, the selection is empty
     if (selected_tag == "") and (content_text == ""):
         return False
 
-    if (selected_tag != "") and (not selected_tag in card["tags"]):
+    if (selected_tag != "") and (not selected_tag in card.tags):
         return False
 
-    if (card_level is not None) and (card["grade"] != card_level):
+    if (card_level is not None) and (card.grade != card_level):
         return False
     
-    if (content_text != "") and (card["question"].lower().find(content_text.lower()) == -1) and (card["answer"].lower().find(content_text.lower()) == -1):
+    if (content_text != "") and (card.question.lower().find(content_text.lower()) == -1) and (card.answer.lower().find(content_text.lower()) == -1):
         return False
 
-    if datetime_to_date(card["cdate"]) == today:
+    if datetime_to_date(card.creation_datetime) == today:
         return False
 
-    if "reviews" not in card.keys():
+    if card.consolidation_reviews is None:
         return True
 
-    if len(card["reviews"]) == 0:
+    if len(card.consolidation_reviews) == 0:
         return True
 
-    card_not_reviewed_during_null_period = all([datetime_to_date(review["rdate"]) < today - datetime.timedelta(days=null_period) for review in card["reviews"]])   # Formerly "card_not_reviewed_today"
+    card_not_reviewed_during_null_period = all([datetime_to_date(review.review_datetime) < today - datetime.timedelta(days=null_period) for review in card.consolidation_reviews])   # Formerly "card_not_reviewed_today"
     if card_not_reviewed_during_null_period:
         return True
     else:
